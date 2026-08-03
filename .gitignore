@@ -1,0 +1,14 @@
+.cache/
+.python-version
+
+__pycache__/
+*.pyc/
+
+.mypy_cache/
+.pytest_cache/
+
+.venv-fly_in
+.venv
+venv
+.env
+env
