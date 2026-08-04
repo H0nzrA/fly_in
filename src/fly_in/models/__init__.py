@@ -3,8 +3,6 @@ from .zone import (
     ZoneMetadata,
     ZonePrefix,
     ZoneType,
-    Connection,
-    ConnectionMetadata
 )
 from .connection import Connection, ConnectionMetadata
 from .map import Map
