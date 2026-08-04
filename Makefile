@@ -119,3 +119,7 @@ add			: init
 remove		: init
 	@ echo "$(C_BLUE)> Remove dependencies: $(DEP)$(C_RESET)"
 	@ $(UV) remove $(DEP)
+
+
+tree		: init
+	@ $(UV) tree

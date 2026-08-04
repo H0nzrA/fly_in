@@ -6,6 +6,7 @@ from .models import (
     Connection,
     ConnectionMetadata
 )
+from .cli import MapSelector
 
 
 __all__: list[str] = [
@@ -14,5 +15,6 @@ __all__: list[str] = [
     "ZonePrefix",
     "ZoneType",
     "Connection",
-    "ConnectionMetadata"
+    "ConnectionMetadata",
+    "MapSelector"
 ]
