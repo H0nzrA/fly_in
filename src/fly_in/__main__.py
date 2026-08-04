@@ -1,5 +1,9 @@
+import sys
+
+
 def main() -> None:
     print("Hello from fly-in")
+    print(f"Sys lenght: {len(sys.argv)}")
 
 
 if __name__ == "__main__":

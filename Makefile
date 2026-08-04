@@ -1,4 +1,4 @@
-NAME		:= fly_in
+NAME		:= fly-in
 PYPROJECT	:= pyproject.toml
 
 SRC		:= src
@@ -68,7 +68,7 @@ install		: init
 
 run			: install
 	@ echo "$(C_BLUE)> Launch Project ...$(C_RESET)"
-	@ $(URUN) python -m $(SRC)
+	@ $(URUN) $(NAME) $(ARGS)
 
 
 debug		: install

@@ -1,5 +1,6 @@
 .cache/
 .python-version
+pyrightconfig.json
 
 __pycache__/
 *.pyc/
@@ -8,6 +9,7 @@ __pycache__/
 .pytest_cache/
 
 .venv-fly_in
+.venv-fly-in
 .venv
 venv
 .env
