@@ -57,7 +57,7 @@ init		: check
 		$(UV) init . --name $(NAME); \
 		echo "$(C_GREEN)... Project successfully initialized.$(C_RESET)"; \
 	else \
-		echo "$(C_MAGENTA) ... Project already initialized.$(C_RESET)"; \
+		echo "$(C_MAGENTA)... Project already initialized.$(C_RESET)"; \
 	fi
 
 
