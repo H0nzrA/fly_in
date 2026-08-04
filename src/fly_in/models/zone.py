@@ -28,7 +28,7 @@ class Zone(BaseModel):
 
     prefix: ZonePrefix
     name: str
-    positions: tuple[int, int]
+    coordinate: tuple[int, int]
     metadata: ZoneMetadata = Field(default_factory=ZoneMetadata)
 
     @model_validator(mode="after")
@@ -38,19 +38,3 @@ class Zone(BaseModel):
                 f"Find Dashes on zone name: {self.name}"
             )
         return self
-
-
-class ConnectionMetadata(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    max_link_capacity: int = 1  # Maximum drones that can traverse
-
-
-class Connection(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    source: Zone
-    destination: Zone
-    metadata: ConnectionMetadata = Field(
-        default_factory=ConnectionMetadata
-    )
