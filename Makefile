@@ -73,7 +73,7 @@ run			: install
 
 debug		: install
 	@ echo "$(C_BLUE)> Launch Project (debug mode) ...$(C_RESET)"
-	@ $(URUN) python -m pdb $(SRC)
+	@ $(URUN) python -m pdb -m $(SRC)
 
 
 test		: install
@@ -99,6 +99,7 @@ clean		:
 	@ echo "$(C_BLUE)> Remove python cache$(C_RESET)"
 	@ find . -name "__pycache__" -type d -exec $(RM) {} +
 	@ find . -name ".mypy_cache" -type d -exec $(RM) {} +
+	@ find . -name ".pytest_cache" -type d -exec $(RM) {} +
 	@ find . -name "*.pyc" -type d -exec $(RM) {} +
 
 
