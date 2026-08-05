@@ -5,17 +5,17 @@ def test_zone() -> None:
     zone: Zone = Zone(
         prefix="start_hub",
         name="Hello",
-        positions=(2, 3),
+        coordinate=(2, 3),
         metadata=ZoneMetadata(
-            type="normal",
+            zone="normal",
             color="red",
             max_drones=4
         )
     )
 
     print(
-        f"{zone.prefix}: {zone.name} {zone.positions} "
-        f"[{zone.metadata.type} {zone.metadata.color} "
+        f"{zone.prefix}: {zone.name} {zone.coordinate} "
+        f"[{zone.metadata.zone} {zone.metadata.color} "
         f"{zone.metadata.max_drones}]"
     )
 
@@ -24,9 +24,9 @@ def test_connection() -> None:
     zone1: Zone = Zone(
         prefix="start_hub",
         name="Hello",
-        positions=(2, 3),
+        coordinate=(2, 3),
         metadata=ZoneMetadata(
-            type="normal",
+            zone="normal",
             color="red",
             max_drones=4
         )
@@ -35,9 +35,9 @@ def test_connection() -> None:
     zone2: Zone = Zone(
         prefix="end_hub",
         name="Hello",
-        positions=(2, 3),
+        coordinate=(2, 3),
         metadata=ZoneMetadata(
-            type="normal",
+            zone="normal",
             color="red",
             max_drones=4
         )

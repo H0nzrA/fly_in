@@ -18,7 +18,7 @@ class ZoneType(str, Enum):
 class ZoneMetadata(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    type: ZoneType = ZoneType.NORMAL
+    zone: ZoneType = ZoneType.NORMAL
     color: str | None = None
     max_drones: int = 1  # Maximum drones occupied
 

@@ -4,9 +4,10 @@ from .models import (
     ZonePrefix,
     ZoneType,
     Connection,
-    ConnectionMetadata
+    ConnectionMetadata,
+    Map
 )
-from .cli import MapSelector
+from .cli import MapSelector, Parser
 
 
 __all__: list[str] = [
@@ -16,5 +17,7 @@ __all__: list[str] = [
     "ZoneType",
     "Connection",
     "ConnectionMetadata",
-    "MapSelector"
+    "Map",
+    "MapSelector",
+    "Parser"
 ]

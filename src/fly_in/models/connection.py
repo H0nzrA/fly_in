@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, model_validator, Field
+from pydantic import BaseModel, ConfigDict, Field
 from .zone import Zone
 
 
