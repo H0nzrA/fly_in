@@ -57,7 +57,7 @@ class Parser(BaseModel):
                         raise ValueError(f"Duplicate key: {key!r}")
                     res[key] = int(value)
 
-                if key in (
+                elif key in (
                     ZonePrefix.START.value,
                     ZonePrefix.END.value,
                     ZonePrefix.HUB.value,
@@ -82,8 +82,11 @@ class Parser(BaseModel):
                     if zone.prefix == ZonePrefix.HUB:
                         hubs.append(zone)
 
-                if key == Key.CONN.value:
+                elif key == Key.CONN.value:
                     conns.append(self.__connection_parsing(key, value))
+
+                else:
+                    raise ValueError(f"Unknown key defined: {key!r}")
 
             except ValueError as e:
                 raise ParserError(num, str(e))

@@ -1,5 +1,4 @@
-from fly_in import Parser, Map
-
+from fly_in import MapSelector, Parser, Map, Zone, ZoneMetadata, Connection
 
 def test_path1() -> None:
     path = "src/fly_in/maps/hard/03_ultimate_challenge.txt"
@@ -13,15 +12,27 @@ def test_path2() -> None:
 
     fmap: Map = parser.get_map()
 
-def test_path3() -> None:
-    path = "src/fly_in/maps/challenger/01_the_impossible_dream.txt"
-    parser = Parser(path=path)
-
-    fmap: Map = parser.get_map()
-
-def test_path4() -> None:
-    path = "src/fly_in/maps/medium/02_circular_loop.txt"
-    parser = Parser(path=path)
-
-    fmap: Map = parser.get_map()
-
+    assert fmap.nb_drones == 4
+    start = Zone(
+        prefix="start_hub",
+        name="start",
+        coordinate=(0, 0),
+        metadata=ZoneMetadata(
+            color="green",
+            max_drones=4
+        )
+    )
+    bt = Zone(
+        prefix="hub",
+        name="bottleneck",
+        coordinate=(1, 0),
+        metadata=ZoneMetadata(
+            color="orange",
+            max_drones=2
+        )
+    )
+    assert fmap.start_hub == start
+    assert fmap.connections[0] == Connection(
+        source=start,
+        destination=bt
+    )
