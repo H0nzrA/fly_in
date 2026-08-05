@@ -1,10 +1,17 @@
-from .cli import MapSelector
+from .cli import MapSelector, Parser
+
+
+class Program:
+    def run(self) -> None:
+        selector: MapSelector = MapSelector()
+        parser: Parser = Parser(path=selector.get_map_path())
+        _ = parser.get_map()
 
 
 def main() -> None:
     try:
-        maps: MapSelector = MapSelector()
-        print(maps.get_map_path().read_text())
+        program: Program = Program()
+        program.run()
 
     except (KeyboardInterrupt, EOFError):
         print("\n=== Program Stopped ===\n")

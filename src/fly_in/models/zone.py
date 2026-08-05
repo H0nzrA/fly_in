@@ -16,7 +16,7 @@ class ZoneType(str, Enum):
 
 
 class ZoneMetadata(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", frozen=True)
 
     zone: ZoneType = ZoneType.NORMAL
     color: str | None = None
@@ -24,7 +24,7 @@ class ZoneMetadata(BaseModel):
 
 
 class Zone(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", frozen=True)
 
     prefix: ZonePrefix
     name: str

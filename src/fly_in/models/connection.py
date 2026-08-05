@@ -3,13 +3,13 @@ from .zone import Zone
 
 
 class ConnectionMetadata(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", frozen=True)
 
     max_link_capacity: int = 1  # Maximum drones that can traverse
 
 
 class Connection(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", frozen=True)
 
     source: Zone
     destination: Zone
