@@ -20,7 +20,22 @@ class ZoneMetadata(BaseModel):
 
     zone: ZoneType = ZoneType.NORMAL
     color: str | None = None
-    max_drones: int = 1  # Maximum drones occupied
+    max_drones: int = Field(ge=0, default=1)  # Maximum drones occupied
+
+    @model_validator(mode="after")
+    def initialization(self) -> "ZoneMetadata":
+        if self.color:
+            if len(self.color) < 3:
+                raise ValueError(
+                    "Color must be a valid string"
+                )
+
+            for c in self.color:
+                if not c.isalpha():
+                    raise ValueError(
+                        "Color must be only strings"
+                    )
+        return self
 
 
 class Zone(BaseModel):
@@ -35,6 +50,6 @@ class Zone(BaseModel):
     def validation(self) -> "Zone":
         if "-" in self.name or " " in self.name:
             raise ValueError(
-                f"Find Dashes on zone name: {self.name}"
+                f"Find Dashes on zone name {self.name!r}"
             )
         return self

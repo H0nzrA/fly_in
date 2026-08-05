@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, PrivateAttr
+from pydantic import BaseModel, ConfigDict, PrivateAttr, ValidationError
 from pathlib import Path
 from ..models import (
     Zone,
@@ -16,7 +16,7 @@ class ParserError(Exception):
         line_num: int,
         msg: str
     ) -> None:
-        err: str = f"Parsing Error: Line {line_num}: {msg}"
+        err: str = f"Parsing Error on [Line {line_num}]: {msg}"
         super().__init__(err)
 
 
@@ -54,8 +54,14 @@ class Parser(BaseModel):
 
                 if key == Key.NDRONES.value:
                     if key in res:
-                        raise ValueError(f"Duplicate key: {key!r}")
-                    res[key] = int(value)
+                        raise ValueError(f"Duplicated key: {key!r}")
+                    nb = int(value)
+                    if nb <= 0:
+                        raise ValueError(
+                            f"Invalid Number of drones {nb!r}, "
+                            "Minimum 1"
+                        )
+                    res[Key.NDRONES.value] = nb
 
                 elif key in (
                     ZonePrefix.START.value,
@@ -68,14 +74,14 @@ class Parser(BaseModel):
                     if zone.prefix == ZonePrefix.START:
                         if ZonePrefix.START.value in res:
                             raise ValueError(
-                                f"Duplicate {ZonePrefix.START.value!r} zone"
+                                f"Duplicated {ZonePrefix.START.value!r} zone"
                             )
                         res[ZonePrefix.START.value] = zone
 
                     if zone.prefix == ZonePrefix.END:
                         if ZonePrefix.END.value in res:
                             raise ValueError(
-                                f"Duplicate {ZonePrefix.END.value!r} zone"
+                                f"Duplicated {ZonePrefix.END.value!r} zone"
                             )
                         res[ZonePrefix.END.value] = zone
 
@@ -106,7 +112,12 @@ class Parser(BaseModel):
         if len(prop) > 4:
             raise ValueError("Too Many value given for Zone data")
 
-        res["name"] = prop[0]
+        name: str = prop[0]
+        if name in self.__zone_name:
+            raise ValueError(f"Zone with the name {name!r} already set")
+
+        res["name"] = name
+
         x: int = int(prop[1])
         y: int = int(prop[2])
         res["coordinate"] = (x, y)
@@ -114,7 +125,17 @@ class Parser(BaseModel):
         if len(prop) == 4:
             res["metadata"] = self.__get_metadata(prop[3])
 
-        return Zone(**res)
+        try:
+            zone: Zone = Zone(**res)
+
+        except ValidationError as e:
+            msg = "; ".join(
+                    f"{'.'.join(map(str, err['loc']))}: {err['msg']}"
+                    for err in e.errors()
+                )
+            raise ValueError(msg)
+
+        return zone
 
     def __connection_parsing(self, key: str, value: str) -> Connection:
         prop: list[str] = value.split()
@@ -136,7 +157,9 @@ class Parser(BaseModel):
 
         edge: frozenset[str] = frozenset((source, destination))
         if edge in self.__conn_seen:
-            raise ValueError(f"Connection: {edge!r} duplicate")
+            raise ValueError(
+                f"Duplicated Connection: '{source} - {destination}'"
+            )
         self.__conn_seen.add(edge)
 
         metadata = None
@@ -150,7 +173,17 @@ class Parser(BaseModel):
         if metadata is not None:
             res["metadata"] = metadata
 
-        return Connection(**res)
+        try:
+            connection: Connection = Connection(**res)
+
+        except ValidationError as e:
+            msg = "; ".join(
+                    f"{'.'.join(map(str, err['loc']))}: {err['msg']}"
+                    for err in e.errors()
+                )
+            raise ValueError(msg)
+
+        return connection
 
     def __get_metadata(self, value: str) -> dict[str, Any]:
         if value.startswith("[") and value.endswith("]"):
@@ -167,4 +200,14 @@ class Parser(BaseModel):
             raise ValueError("Metadata must be enclosed with []")
 
     def get_map(self) -> Map:
-        return self.__parse()
+        try:
+            res_map: Map = self.__parse()
+
+        except ValidationError as e:
+            msg = "; ".join(
+                    f"{'.'.join(map(str, err['loc']))}: {err['msg']}"
+                    for err in e.errors()
+                )
+            raise ValueError(msg)
+
+        return res_map

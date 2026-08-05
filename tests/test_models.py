@@ -34,7 +34,7 @@ def test_connection() -> None:
 
     zone2: Zone = Zone(
         prefix="end_hub",
-        name="Hello",
+        name="world",
         coordinate=(2, 3),
         metadata=ZoneMetadata(
             zone="normal",

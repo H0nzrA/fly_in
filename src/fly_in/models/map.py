@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from .zone import Zone
 from .connection import Connection
 
@@ -9,7 +9,7 @@ class Map(BaseModel):
         frozen=True
     )
 
-    nb_drones: int
+    nb_drones: int = Field(ge=0)
     start_hub: Zone
     end_hub: Zone
     hubs: list[Zone]
