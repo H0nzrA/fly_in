@@ -45,7 +45,7 @@ class MapSelector:
                 selected = questionary.select(
                     "Choose Map",
                     choices=[
-                        *[f.name for f in maps],
+                        *sorted([f.name for f in maps]),
                         self.BACK
                     ]
                 ).ask()
