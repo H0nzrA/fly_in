@@ -6,7 +6,7 @@
 #    By: trakotoz <trakotoz@student.42antananarivo  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/08/05 03:18:43 by trakotoz          #+#    #+#              #
-#    Updated: 2026/08/05 08:29:45 by trakotoz         ###   ########.fr        #
+#    Updated: 2026/08/11 16:04:47 by trakotoz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,6 @@ C_GREEN		:= \033[032m
 C_YELLOW	:= \033[33m
 C_BLUE		:= \033[34m
 C_MAGENTA	:= \033[35m
-C_DIM		:= \033[2m
 
 .PHONY: all install \
 	check init \
@@ -46,16 +45,16 @@ C_DIM		:= \033[2m
 
 
 help		:
-	@ echo "$(C_DIM)$(C_BLUE)Usage: make [target] $(C_RESET)"
-	@ echo "$(C_DIM)$(C_GREEN)make install$(C_RESET)        Install all the dependencies"
-	@ echo "$(C_DIM)$(C_GREEN)make run$(C_RESET)            Run the Applications"
-	@ echo "$(C_DIM)$(C_GREEN)make debug$(C_RESET)          Run the Applications under ipdb debugger"
-	@ echo "$(C_DIM)$(C_GREEN)make test$(C_RESET)			Run all Applications test under pytest module"
-	@ echo "$(C_DIM)$(C_GREEN)make lint$(C_RESET)           Run flake8 and mypy (standard version)"
-	@ echo "$(C_DIM)$(C_GREEN)make lint-strict$(C_RESET)    Run flake8 and mypy (strict version)"
-	@ echo "$(C_DIM)$(C_GREEN)make clean$(C_RESET)          Remove python and mypy cache"
-	@ echo "$(C_DIM)$(C_GREEN)make fclean$(C_RESET)         clean + remove virtualenv/dist"
-	@ echo "$(C_DIM)$(C_GREEN)make re$(C_RESET)             fclean + install (rebuild of the project)"
+	@ echo "$(C_BLUE)Usage: make [target] $(C_RESET)"
+	@ echo "$(C_GREEN)make install$(C_RESET)        Install all the dependencies"
+	@ echo "$(C_GREEN)make run$(C_RESET)            Run the Applications"
+	@ echo "$(C_GREEN)make debug$(C_RESET)          Run the Applications under ipdb debugger"
+	@ echo "$(C_GREEN)make test$(C_RESET)			Run all Applications test under pytest module"
+	@ echo "$(C_GREEN)make lint$(C_RESET)           Run flake8 and mypy (standard version)"
+	@ echo "$(C_GREEN)make lint-strict$(C_RESET)    Run flake8 and mypy (strict version)"
+	@ echo "$(C_GREEN)make clean$(C_RESET)          Remove python and mypy cache"
+	@ echo "$(C_GREEN)make fclean$(C_RESET)         clean + remove virtualenv/dist"
+	@ echo "$(C_GREEN)make re$(C_RESET)             fclean + install (rebuild of the project)"
 
 
 all			: install
