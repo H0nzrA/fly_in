@@ -1,6 +1,6 @@
-from .map_selector import MapSelector
-from .parser import Parser
-from ..domain import Map, Zone
+from .cli.map_selector import MapSelector
+from .cli.parser import Parser
+from .domain import Map, Zone, Connection
 
 
 class Program:
@@ -13,6 +13,11 @@ class Program:
 
         for hub in maps.hubs:
             self.__print_zone(hub)
+
+        print()
+
+        for conn in maps.connections:
+            self.__print_connection(conn)
 
         self.__print_zone(maps.end_hub)
 
@@ -27,14 +32,14 @@ class Program:
 
         print(res)
 
+    def __print_connection(
+        self,
+        connection: Connection
+    ) -> None:
+        res: str = ""
 
-def main() -> None:
-    try:
-        program: Program = Program()
-        program.run()
+        res += connection.zone_a.name + " - "
+        res += connection.zone_b.name
+        res += f" [{connection.metadata.max_link_capacity}]"
 
-    except (KeyboardInterrupt, EOFError):
-        print("\n=== Program Stopped ===\n")
-
-    except Exception as e:
-        print(e)
+        print(res)

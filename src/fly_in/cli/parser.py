@@ -203,8 +203,8 @@ class Parser(BaseModel):
             metadata = self.__get_metadata(prop[1])
 
         res: dict[str, Any] = {
-            "source": self.__zone_name[source],
-            "destination": self.__zone_name[destination],
+            "zone_a": self.__zone_name[source],
+            "zone_b": self.__zone_name[destination],
         }
         if metadata is not None:
             res["metadata"] = metadata

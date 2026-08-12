@@ -11,8 +11,8 @@ class ConnectionMetadata(BaseModel):
 class Connection(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
-    source: Zone
-    destination: Zone
+    zone_a: Zone
+    zone_b: Zone
     metadata: ConnectionMetadata = Field(
         default_factory=ConnectionMetadata
     )
@@ -20,8 +20,8 @@ class Connection(BaseModel):
     @model_validator(mode="after")
     def initialization(self) -> "Connection":
         if (
-            self.source.name == self.destination.name or
-            self.source == self.destination
+            self.zone_a.name == self.zone_b.name or
+            self.zone_a == self.zone_b
         ):
             raise ValueError("Self loop connection found")
 
