@@ -1,4 +1,4 @@
-from .models import (
+from .domain import (
     Zone,
     ZoneMetadata,
     ZonePrefix,

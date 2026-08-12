@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict, PrivateAttr, ValidationError
 from pathlib import Path
-from ..models import (
+from ..domain import (
     Zone,
     ZoneMetadata,
     Connection,

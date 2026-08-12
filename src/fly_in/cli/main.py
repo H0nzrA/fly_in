@@ -1,6 +1,6 @@
 from .map_selector import MapSelector
 from .parser import Parser
-from ..models import Map, Zone
+from ..domain import Map, Zone
 
 
 class Program:
