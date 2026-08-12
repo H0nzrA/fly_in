@@ -2,6 +2,7 @@ from pydantic import BaseModel, ConfigDict, PrivateAttr, ValidationError
 from pathlib import Path
 from ..models import (
     Zone,
+    ZoneMetadata,
     Connection,
     Map,
     ZonePrefix
@@ -89,7 +90,7 @@ class Parser(BaseModel):
                         hubs.append(zone)
 
                 elif key == Key.CONN.value:
-                    conns.append(self.__connection_parsing(key, value))
+                    conns.append(self.__connection_parsing(value))
 
                 else:
                     raise ValueError(f"Unknown key defined: {key!r}")
@@ -100,7 +101,42 @@ class Parser(BaseModel):
         res["hubs"] = hubs
         res["connections"] = conns
 
+        return self.__evaluation(res)
+
+    def __evaluation(self, res: dict[str, Any]) -> Map:
+        nb_drones: int = res["nb_drones"]
+        start: Zone = res[ZonePrefix.START.value]
+        end: Zone = res[ZonePrefix.END.value]
+
+        if start.metadata.max_drones < nb_drones:
+            start = self.__update_hub_capacity(start, nb_drones)
+            print(
+                f"[Warning]: {start.name!r} zone max drones capacity "
+                "inferior capacity inferior to number of drones -- "
+                f"Updated to {nb_drones!r}"
+            )
+
+        if end.metadata.max_drones < nb_drones:
+            end = self.__update_hub_capacity(end, nb_drones)
+            print(
+                f"[Warning]: {end.name!r} zone max drones capacity "
+                "inferior capacity inferior to number of drones -- "
+                f"Updated to {nb_drones!r}"
+            )
+
+        res[ZonePrefix.START.value] = start
+        res[ZonePrefix.END.value] = end
+
         return Map(**res)
+
+    def __update_hub_capacity(self, zone: Zone, capacity: int) -> Zone:
+        metadata: ZoneMetadata = zone.metadata.model_copy(
+            update={"max_drones": capacity}
+        )
+
+        return zone.model_copy(
+            update={"metadata": metadata}
+        )
 
     def __zone_parsing(self, key: str, value: str) -> Zone:
         res: dict[str, Any] = {}
@@ -137,7 +173,7 @@ class Parser(BaseModel):
 
         return zone
 
-    def __connection_parsing(self, key: str, value: str) -> Connection:
+    def __connection_parsing(self, value: str) -> Connection:
         prop: list[str] = value.split()
         if len(prop) > 2:
             raise ValueError("Too Many value given for Connection data")
