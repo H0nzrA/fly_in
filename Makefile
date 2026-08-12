@@ -6,14 +6,14 @@
 #    By: trakotoz <trakotoz@student.42antananarivo  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/08/05 03:18:43 by trakotoz          #+#    #+#              #
-#    Updated: 2026/08/11 16:04:47 by trakotoz         ###   ########.fr        #
+#    Updated: 2026/08/12 05:39:54 by trakotoz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		:= fly-in
 PYPROJECT	:= pyproject.toml
 
-SRC		:= src
+SRC		:= src/fly_in
 TEST	:= tests
 
 PYTHON_INSTALL := python3
@@ -35,20 +35,18 @@ C_YELLOW	:= \033[33m
 C_BLUE		:= \033[34m
 C_MAGENTA	:= \033[35m
 
-.PHONY: all install \
-	check init \
+.PHONY: all install check \
 	run test \
 	lint lint-strict \
 	clean fclean \
 	add remove \
-	re
+	re tree help
 
 
 help		:
 	@ echo "$(C_BLUE)Usage: make [target] $(C_RESET)"
 	@ echo "$(C_GREEN)make install$(C_RESET)        Install all the dependencies"
 	@ echo "$(C_GREEN)make run$(C_RESET)            Run the Applications"
-	@ echo "$(C_GREEN)make debug$(C_RESET)          Run the Applications under ipdb debugger"
 	@ echo "$(C_GREEN)make test$(C_RESET)			Run all Applications test under pytest module"
 	@ echo "$(C_GREEN)make lint$(C_RESET)           Run flake8 and mypy (standard version)"
 	@ echo "$(C_GREEN)make lint-strict$(C_RESET)    Run flake8 and mypy (strict version)"
@@ -72,21 +70,7 @@ check		:
 	}
 
 
-init		: check
-	@ echo "$(C_BLUE)> Initialization of the project ...$(C_RESET)"
-	@ if [ ! -d $(VENV) ]; then \
-		$(UV) venv $(VENV); \
-		echo "$(C_GREEN)... Virtual Environement Created.$(C_RESET)"; \
-	fi
-	@ if [ ! -f $(PYPROJECT) ]; then \
-		$(UV) init . --name $(NAME); \
-		echo "$(C_GREEN)... Project successfully initialized.$(C_RESET)"; \
-	else \
-		echo "$(C_MAGENTA)... Project already initialized.$(C_RESET)"; \
-	fi
-
-
-install		: init
+install		: check
 	@ echo "$(C_BLUE)> Project Installation/Syncronization ...$(C_RESET)"
 	@ $(UV) sync
 
@@ -94,11 +78,6 @@ install		: init
 run			: install
 	@ echo "$(C_BLUE)> Launch Project ...$(C_RESET)"
 	@ $(URUN) $(NAME) $(ARGS)
-
-
-debug		: install
-	@ echo "$(C_BLUE)> Launch Project (debug mode) ...$(C_RESET)"
-	@ $(URUN) python -m pdb -m $(SRC)
 
 
 test		: install
@@ -125,7 +104,7 @@ clean		:
 	@ find . -name "__pycache__" -type d -exec $(RM) {} +
 	@ find . -name ".mypy_cache" -type d -exec $(RM) {} +
 	@ find . -name ".pytest_cache" -type d -exec $(RM) {} +
-	@ find . -name "*.pyc" -type d -exec $(RM) {} +
+	@ find . -name "*.pyc" -type f -exec $(RM) {} +
 
 
 fclean		: clean
@@ -136,15 +115,15 @@ fclean		: clean
 re			: fclean all
 
 
-add			: init
+add			: check
 	@ echo "$(C_BLUE)> Add dependencies: $(DEP)$(C_RESET)"
 	@ $(UV) add $(DEP)
 
 
-remove		: init
+remove		: check
 	@ echo "$(C_BLUE)> Remove dependencies: $(DEP)$(C_RESET)"
 	@ $(UV) remove $(DEP)
 
 
-tree		: init
+tree		: check
 	@ $(UV) tree
