@@ -8,6 +8,7 @@ from .domain import (
     Map
 )
 from .cli import MapSelector, Parser
+from .graph import Graph
 
 
 __all__: list[str] = [
@@ -19,5 +20,6 @@ __all__: list[str] = [
     "ConnectionMetadata",
     "Map",
     "MapSelector",
-    "Parser"
+    "Parser",
+    "Graph"
 ]

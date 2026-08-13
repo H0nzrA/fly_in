@@ -41,6 +41,7 @@ class ZoneMetadata(BaseModel):
 class Zone(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
+    id: int = Field(ge=0)
     prefix: ZonePrefix
     name: str
     coordinate: tuple[int, int]

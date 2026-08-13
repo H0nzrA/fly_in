@@ -14,6 +14,7 @@ def test_path2() -> None:
 
     assert fmap.nb_drones == 4
     start = Zone(
+        id=0,
         prefix="start_hub",
         name="start",
         coordinate=(0, 0),
@@ -23,6 +24,7 @@ def test_path2() -> None:
         )
     )
     bt = Zone(
+        id=1,
         prefix="hub",
         name="bottleneck",
         coordinate=(1, 0),
@@ -33,6 +35,6 @@ def test_path2() -> None:
     )
     assert fmap.start_hub == start
     assert fmap.connections[0] == Connection(
-        source=start,
-        destination=bt
+        zone_a=start,
+        zone_b=bt
     )

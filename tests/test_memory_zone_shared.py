@@ -6,5 +6,5 @@ def test_shared_memory() -> None:
 
     fmap: Map = parser.get_map()
 
-    assert fmap.connections[0].source is fmap.start_hub
-    assert fmap.connections[2].destination is fmap.end_hub
+    assert fmap.connections[0].zone_a is fmap.start_hub
+    assert fmap.connections[2].zone_b is fmap.end_hub

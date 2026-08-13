@@ -12,14 +12,14 @@ class Graph(BaseModel):
         frozen=True
     )
 
-    fmap: Map
+    map: Map
     __adjacency_list: dict[Zone, set[Connection]] = PrivateAttr(
         default_factory=dict
     )
 
     @model_validator(mode="after")
     def __adjacency_extraction(self) -> "Graph":
-        for conn in self.fmap.connections:
+        for conn in self.map.connections:
             self.__adjacency_list.setdefault(
                 conn.zone_a, set()
             ).add(conn)
@@ -50,8 +50,21 @@ class Graph(BaseModel):
 
         return self.__adjacency_list[zone].copy()
 
+    def get_zone(self, id: int) -> Zone:
+        if id == 0:
+            return self.start_zone()
+
+        if id == self.end_zone().id:
+            return self.end_zone()
+
+        for zone in self.map.hubs:
+            if id == zone.id:
+                return zone
+
+        raise ValueError(f"No zone with id {id!r} found")
+
     def start_zone(self) -> Zone:
-        return self.fmap.start_hub
+        return self.map.start_hub
 
     def end_zone(self) -> Zone:
-        return self.fmap.end_hub
+        return self.map.end_hub

@@ -14,17 +14,19 @@ class Program:
         for hub in maps.hubs:
             self.__print_zone(hub)
 
-        print()
-
-        for conn in maps.connections:
-            self.__print_connection(conn)
-
         self.__print_zone(maps.end_hub)
+
+        # print()
+        #
+        # for conn in maps.connections:
+        #     self.__print_connection(conn)
+        #
+        # self.__print_zone(maps.end_hub)
 
     def __print_zone(self, zone: Zone) -> None:
         res: str = ""
 
-        res += zone.name + ": "
+        res += zone.name + f" {zone.id} : "
         res += str(zone.coordinate) + " "
         res += zone.metadata.zone + " "
         res += str(zone.metadata.color) + " "

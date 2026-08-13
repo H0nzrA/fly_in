@@ -43,6 +43,8 @@ class Parser(BaseModel):
         hubs: list[Zone] = []
         conns: list[Connection] = []
 
+        current_id: int = 0
+
         for num, line in enumerate(lines, start=1):
             if line.startswith("#"):
                 continue
@@ -69,7 +71,7 @@ class Parser(BaseModel):
                     ZonePrefix.END.value,
                     ZonePrefix.HUB.value,
                 ):
-                    zone: Zone = self.__zone_parsing(key, value)
+                    zone: Zone = self.__zone_parsing(key, value, current_id)
                     self.__zone_name[zone.name] = zone
 
                     if zone.prefix == ZonePrefix.START:
@@ -88,6 +90,8 @@ class Parser(BaseModel):
 
                     if zone.prefix == ZonePrefix.HUB:
                         hubs.append(zone)
+
+                    current_id += 1
 
                 elif key == Key.CONN.value:
                     conns.append(self.__connection_parsing(value))
@@ -138,8 +142,9 @@ class Parser(BaseModel):
             update={"metadata": metadata}
         )
 
-    def __zone_parsing(self, key: str, value: str) -> Zone:
+    def __zone_parsing(self, key: str, value: str, id: int) -> Zone:
         res: dict[str, Any] = {}
+        res["id"] = id
         res["prefix"] = ZonePrefix(key)
 
         prop: list[str] = value.split(maxsplit=3)
