@@ -1,5 +1,5 @@
 from .cli.map_selector import MapSelector
-from .cli.parser import Parser
+from .parser import Parser
 from .domain import Map, Zone, Connection
 
 

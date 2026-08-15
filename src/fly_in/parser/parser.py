@@ -2,13 +2,14 @@ from pydantic import BaseModel, ConfigDict, PrivateAttr, ValidationError
 from pathlib import Path
 from ..domain import (
     Zone,
-    ZoneMetadata,
     Connection,
     Map,
     ZonePrefix
 )
 from typing import Any
 from enum import Enum
+from .zone_parser import ZoneParser
+from .connection_parser import ConnectionParser
 
 
 class ParserError(Exception):
@@ -30,9 +31,10 @@ class Parser(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     path: Path
-
-    __zone_name: dict[str, Zone] = PrivateAttr(default_factory=dict)
-    __conn_seen: set[frozenset[str]] = PrivateAttr(default_factory=set)
+    __zparser: ZoneParser = PrivateAttr(default_factory=ZoneParser)
+    __cparser: ConnectionParser = PrivateAttr(
+        default_factory=ConnectionParser
+    )
 
     def __get_file_content(self) -> list[str]:
         return self.path.read_text().split("\n")
@@ -43,17 +45,28 @@ class Parser(BaseModel):
         hubs: list[Zone] = []
         conns: list[Connection] = []
 
+        first_line: bool = True
         current_id: int = 0
 
         for num, line in enumerate(lines, start=1):
-            if line.strip().startswith("#"):
+            line = line.strip()
+
+            if not line:
                 continue
 
-            if not line.strip():
+            if line.startswith("#"):
                 continue
 
             try:
                 key, value = line.split(":", 1)
+
+                if first_line and key != Key.NDRONES.value:
+                    raise ValueError(
+                        f"Key {Key.NDRONES.value!r} expected on "
+                        "first line."
+                    )
+
+                first_line = False
 
                 if key == Key.NDRONES.value:
                     if key in res:
@@ -71,8 +84,11 @@ class Parser(BaseModel):
                     ZonePrefix.END.value,
                     ZonePrefix.HUB.value,
                 ):
-                    zone: Zone = self.__zone_parsing(key, value, current_id)
-                    self.__zone_name[zone.name] = zone
+                    zone: Zone = self.__zparser.get_zone(
+                        key,
+                        value,
+                        current_id
+                    )
 
                     if zone.prefix == ZonePrefix.START:
                         if ZonePrefix.START.value in res:
@@ -94,7 +110,12 @@ class Parser(BaseModel):
                     current_id += 1
 
                 elif key == Key.CONN.value:
-                    conns.append(self.__connection_parsing(value))
+                    conns.append(
+                        self.__cparser.get_connection(
+                            value,
+                            self.__zparser.is_known_zone
+                        )
+                    )
 
                 else:
                     raise ValueError(f"Unknown key defined: {key!r}")
@@ -114,7 +135,10 @@ class Parser(BaseModel):
             end: Zone = res[ZonePrefix.END.value]
 
             if start.metadata.max_drones < nb_drones:
-                start = self.__update_hub_capacity(start, nb_drones)
+                start = self.__zparser.update_hub_capacity(
+                    start,
+                    nb_drones
+                )
                 print(
                     f"[Warning]: {start.name!r} zone max drones capacity "
                     "inferior capacity inferior to number of drones -- "
@@ -122,7 +146,7 @@ class Parser(BaseModel):
                 )
 
             if end.metadata.max_drones < nb_drones:
-                end = self.__update_hub_capacity(end, nb_drones)
+                end = self.__zparser.update_hub_capacity(end, nb_drones)
                 print(
                     f"[Warning]: {end.name!r} zone max drones capacity "
                     "inferior capacity inferior to number of drones -- "
@@ -138,116 +162,9 @@ class Parser(BaseModel):
 
         return Map(**res)
 
-    def __update_hub_capacity(self, zone: Zone, capacity: int) -> Zone:
-        metadata: ZoneMetadata = zone.metadata.model_copy(
-            update={"max_drones": capacity}
-        )
-
-        return zone.model_copy(
-            update={"metadata": metadata}
-        )
-
-    def __zone_parsing(self, key: str, value: str, id: int) -> Zone:
-        res: dict[str, Any] = {}
-        res["id"] = id
-        res["prefix"] = ZonePrefix(key)
-
-        prop: list[str] = value.split(maxsplit=3)
-        if len(prop) < 3:
-            raise ValueError("Not enough value given for Zone data")
-        if len(prop) > 4:
-            raise ValueError("Too Many value given for Zone data")
-
-        name: str = prop[0]
-        if name in self.__zone_name:
-            raise ValueError(f"Zone with the name {name!r} already set")
-
-        res["name"] = name
-
-        x: int = int(prop[1])
-        y: int = int(prop[2])
-        res["coordinate"] = (x, y)
-
-        if len(prop) == 4:
-            res["metadata"] = self.__get_metadata(prop[3])
-
-        try:
-            zone: Zone = Zone(**res)
-
-        except ValidationError as e:
-            msg = "; ".join(
-                    f"{'.'.join(map(str, err['loc']))}: {err['msg']}"
-                    for err in e.errors()
-                )
-            raise ValueError(msg)
-
-        return zone
-
-    def __connection_parsing(self, value: str) -> Connection:
-        prop: list[str] = value.split()
-        if len(prop) > 2:
-            raise ValueError("Too Many value given for Connection data")
-
-        conn: list[str] = prop[0].split("-")
-        if len(conn) != 2:
-            raise ValueError("Connection must be only between two Zone")
-
-        source: str = conn[0]
-        destination: str = conn[1]
-
-        if source not in self.__zone_name:
-            raise ValueError(f"Unknown Zone {source!r}")
-
-        if destination not in self.__zone_name:
-            raise ValueError(f"Unknown Zone {destination!r}")
-
-        edge: frozenset[str] = frozenset((source, destination))
-        if edge in self.__conn_seen:
-            raise ValueError(
-                f"Duplicated Connection: '{source} - {destination}'"
-            )
-        self.__conn_seen.add(edge)
-
-        metadata = None
-        if len(prop) == 2:
-            metadata = self.__get_metadata(prop[1])
-
-        res: dict[str, Any] = {
-            "zone_a": self.__zone_name[source],
-            "zone_b": self.__zone_name[destination],
-        }
-        if metadata is not None:
-            res["metadata"] = metadata
-
-        try:
-            connection: Connection = Connection(**res)
-
-        except ValidationError as e:
-            msg = "; ".join(
-                    f"{'.'.join(map(str, err['loc']))}: {err['msg']}"
-                    for err in e.errors()
-                )
-            raise ValueError(msg)
-
-        return connection
-
-    def __get_metadata(self, value: str) -> dict[str, Any]:
-        if value.startswith("[") and value.endswith("]"):
-            content: list[str] = value[1:-1].split()
-            res: dict[str, Any] = {}
-
-            for c in content:
-                k, v = c.split("=")
-                res[k] = v
-
-            return res
-
-        else:
-            raise ValueError("Metadata must be enclosed with []")
-
     def get_map(self) -> Map:
         try:
-            res_map: Map = self.__parse()
+            return self.__parse()
 
         except ValidationError as e:
             msg = "; ".join(
@@ -255,5 +172,3 @@ class Parser(BaseModel):
                     for err in e.errors()
                 )
             raise ValueError(msg)
-
-        return res_map

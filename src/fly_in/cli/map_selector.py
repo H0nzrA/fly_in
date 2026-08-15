@@ -11,6 +11,7 @@ class MapSelector:
     def __select_map(self) -> Path:
         map_root = (
             files("fly_in")
+            .joinpath("cli")
             .joinpath("maps")
         )
         difficulties = [
