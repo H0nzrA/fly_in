@@ -46,7 +46,7 @@ class Parser(BaseModel):
         current_id: int = 0
 
         for num, line in enumerate(lines, start=1):
-            if line.startswith("#"):
+            if line.strip().startswith("#"):
                 continue
 
             if not line.strip():
@@ -108,28 +108,33 @@ class Parser(BaseModel):
         return self.__evaluation(res)
 
     def __evaluation(self, res: dict[str, Any]) -> Map:
-        nb_drones: int = res["nb_drones"]
-        start: Zone = res[ZonePrefix.START.value]
-        end: Zone = res[ZonePrefix.END.value]
+        try:
+            nb_drones: int = res["nb_drones"]
+            start: Zone = res[ZonePrefix.START.value]
+            end: Zone = res[ZonePrefix.END.value]
 
-        if start.metadata.max_drones < nb_drones:
-            start = self.__update_hub_capacity(start, nb_drones)
-            print(
-                f"[Warning]: {start.name!r} zone max drones capacity "
-                "inferior capacity inferior to number of drones -- "
-                f"Updated to {nb_drones!r}"
-            )
+            if start.metadata.max_drones < nb_drones:
+                start = self.__update_hub_capacity(start, nb_drones)
+                print(
+                    f"[Warning]: {start.name!r} zone max drones capacity "
+                    "inferior capacity inferior to number of drones -- "
+                    f"Updated to {nb_drones!r}"
+                )
 
-        if end.metadata.max_drones < nb_drones:
-            end = self.__update_hub_capacity(end, nb_drones)
-            print(
-                f"[Warning]: {end.name!r} zone max drones capacity "
-                "inferior capacity inferior to number of drones -- "
-                f"Updated to {nb_drones!r}"
-            )
+            if end.metadata.max_drones < nb_drones:
+                end = self.__update_hub_capacity(end, nb_drones)
+                print(
+                    f"[Warning]: {end.name!r} zone max drones capacity "
+                    "inferior capacity inferior to number of drones -- "
+                    f"Updated to {nb_drones!r}"
+                )
 
-        res[ZonePrefix.START.value] = start
-        res[ZonePrefix.END.value] = end
+            res[ZonePrefix.START.value] = start
+            res[ZonePrefix.END.value] = end
+
+        except KeyError as e:
+            msg: str = f"Parser Error [Evaluation]: Key {e} not defined"
+            raise ValueError(msg)
 
         return Map(**res)
 
