@@ -23,7 +23,7 @@ class MapSelector:
             choice = questionary.select(
                 "Choose difficuly",
                 choices=[
-                    *[d.name.capitalize() for d in difficulties],
+                    *sorted([d.name.capitalize() for d in difficulties]),
                     self.EXIT
                 ]
             ).ask()

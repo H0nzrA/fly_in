@@ -13,7 +13,7 @@ class Graph(BaseModel):
     )
 
     map: Map
-    __adjacency_list: dict[Zone, set[Connection]] = PrivateAttr(
+    __adjacency_list: dict[int, set[Connection]] = PrivateAttr(
         default_factory=dict
     )
 
@@ -21,41 +21,35 @@ class Graph(BaseModel):
     def __adjacency_extraction(self) -> "Graph":
         for conn in self.map.connections:
             self.__adjacency_list.setdefault(
-                conn.zone_a, set()
+                conn.zone_a.id, set()
             ).add(conn)
             self.__adjacency_list.setdefault(
-                conn.zone_b, set()
+                conn.zone_b.id, set()
             ).add(conn)
 
         return self
 
-    def neighbors(self, zone: Zone) -> set[Zone]:
-        if zone not in self.__adjacency_list:
-            raise ValueError(f"No Zone {zone.name} found in list")
+    def neighbors(self, zone_id: int) -> set[int]:
+        if zone_id not in self.__adjacency_list:
+            raise ValueError(f"No Zone id {zone_id!r} found in list")
 
-        ngb: set[Zone] = set()
+        ngb: set[int] = set()
 
-        for conn in self.__adjacency_list[zone]:
+        for conn in self.__adjacency_list[zone_id]:
 
-            if zone == conn.zone_a:
-                ngb.add(conn.zone_b)
+            if zone_id == conn.zone_a.id:
+                ngb.add(conn.zone_b.id)
             else:
-                ngb.add(conn.zone_a)
+                ngb.add(conn.zone_a.id)
 
         return ngb
 
-    def connections(self, zone: Zone) -> set[Connection]:
-        if zone not in self.__adjacency_list:
-            raise ValueError(f"No Zone {zone.name} found in list")
-
-        return self.__adjacency_list[zone].copy()
-
     def get_zone(self, id: int) -> Zone:
         if id == 0:
-            return self.start_zone()
+            return self.map.start_hub
 
-        if id == self.end_zone().id:
-            return self.end_zone()
+        if id == self.map.end_hub.id:
+            return self.map.end_hub
 
         for zone in self.map.hubs:
             if id == zone.id:
@@ -63,8 +57,8 @@ class Graph(BaseModel):
 
         raise ValueError(f"No zone with id {id!r} found")
 
-    def start_zone(self) -> Zone:
-        return self.map.start_hub
+    def start_zone(self) -> int:
+        return self.map.start_hub.id
 
-    def end_zone(self) -> Zone:
-        return self.map.end_hub
+    def end_zone(self) -> int:
+        return self.map.end_hub.id
