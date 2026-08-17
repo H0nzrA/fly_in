@@ -28,8 +28,8 @@ class BFS:
         queue: Deque[int] = deque()
 
         # Start of the BFS Algorithm
-        start: int = graph.start_zone()
-        goal: int = graph.end_zone()
+        start: int = graph.start_node()
+        goal: int = graph.end_node()
         visited.add(start)
         parent[start] = None
         queue.append(start)

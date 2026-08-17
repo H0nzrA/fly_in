@@ -2,8 +2,16 @@ from pydantic import BaseModel, ConfigDict, PrivateAttr, model_validator
 from ..domain import (
     Map,
     Zone,
+    ZoneType,
     Connection
 )
+
+
+class NodeNotFoundError(ValueError):
+    def __init__(self, id: int) -> None:
+        super().__init__(
+            f"No zone with id {id!r} found in list"
+        )
 
 
 class Graph(BaseModel):
@@ -29,22 +37,39 @@ class Graph(BaseModel):
 
         return self
 
-    def neighbors(self, zone_id: int) -> set[int]:
-        if zone_id not in self.__adjacency_list:
-            raise ValueError(f"No Zone id {zone_id!r} found in list")
+    def __node_verification(self, id: int) -> None:
+        if id not in self.__adjacency_list:
+            raise NodeNotFoundError(id)
 
-        ngb: set[int] = set()
+    def neighbors(self, id: int) -> dict[int, float]:
+        self.__node_verification(id)
 
-        for conn in self.__adjacency_list[zone_id]:
+        ngb: dict[int, float] = {}
 
-            if zone_id == conn.zone_a.id:
-                ngb.add(conn.zone_b.id)
+        for conn in self.__adjacency_list[id]:
+
+            if id == conn.zone_a.id:
+                ngb[conn.zone_b.id] = self.__zone_weight(id)
             else:
-                ngb.add(conn.zone_a.id)
+                ngb[conn.zone_a.id] = self.__zone_weight(conn.zone_a.id)
 
         return ngb
 
-    def get_zone(self, id: int) -> Zone:
+    def __zone_weight(self, id: int) -> int:
+        zone: Zone = self.get_zone_by_id(id)
+
+        ztype: ZoneType = zone.metadata.zone
+
+        if ztype == ZoneType.RESTRICTED:
+            return 2
+        elif ztype == ZoneType.PRIORITY:
+            return 1
+
+        return 1
+
+    def get_zone_by_id(self, id: int) -> Zone:
+        self.__node_verification(id)
+
         if id == 0:
             return self.map.start_hub
 
@@ -55,10 +80,17 @@ class Graph(BaseModel):
             if id == zone.id:
                 return zone
 
-        raise ValueError(f"No zone with id {id!r} found")
+        raise ValueError
 
-    def start_zone(self) -> int:
+    def get_nodes(self) -> list[int]:
+        return [
+            self.map.start_hub.id,
+            *[m.id for m in self.map.hubs],
+            self.map.end_hub.id
+        ]
+
+    def start_node(self) -> int:
         return self.map.start_hub.id
 
-    def end_zone(self) -> int:
+    def end_node(self) -> int:
         return self.map.end_hub.id

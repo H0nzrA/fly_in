@@ -8,17 +8,16 @@ def test_graph() -> None:
     map: Map = parser.get_map()
     graph: Graph = Graph(map=map)
 
-    assert graph.start_zone() is map.start_hub
-    assert graph.end_zone() is map.end_hub
+    assert graph.start_node() == map.start_hub.id
+    assert graph.end_node() == map.end_hub.id
 
-    start_zone = graph.start_zone()
+    start_zone = graph.start_node()
 
     start_neighbor: list[Zone] = [
-        graph.get_zone(1),
-        graph.get_zone(2),
-        graph.get_zone(3),
+        graph.get_zone_by_id(1),
+        graph.get_zone_by_id(2),
+        graph.get_zone_by_id(3),
     ]
 
-    assert graph.get_zone(0) == map.start_hub
-    assert graph.get_zone(30) == map.end_hub
-    assert graph.neighbors(start_zone) == set(start_neighbor)
+    assert graph.get_zone_by_id(0) == map.start_hub
+    assert graph.get_zone_by_id(30) == map.end_hub

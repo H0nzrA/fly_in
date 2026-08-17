@@ -1,8 +1,9 @@
 from .graph import Graph
-from .solver import BFS
+from .solver import BFS, Dijkstra
 
 
 __all__: list[str] = [
     "Graph",
-    "BFS"
+    "BFS",
+    "Dijkstra"
 ]
