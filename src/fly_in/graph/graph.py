@@ -82,6 +82,9 @@ class Graph(BaseModel):
 
         raise ValueError
 
+    def get_node_position(self, id: int) -> tuple[int, int]:
+        return self.get_zone_by_id(id).coordinate
+
     def get_nodes(self) -> list[int]:
         return [
             self.map.start_hub.id,

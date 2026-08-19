@@ -1,7 +1,7 @@
 from .cli.map_selector import MapSelector
 from .parser import Parser
 from .domain import Map, Zone, Connection
-from .graph import Graph, BFS, Dijkstra
+from .graph import Graph, BFS, Dijkstra, AStar
 
 
 class Program:
@@ -31,18 +31,28 @@ class Program:
         dijkstra: Dijkstra = Dijkstra()
         path_dijkstra: list[int] = dijkstra.solve(graph)
 
+        astar: AStar = AStar()
+        path_astar: list[int] = astar.solve(graph)
+
         path: list[str] = [
             graph.get_zone_by_id(p).name
             for p in path_bfs
         ]
-        print("1:", path)
+        print("BFS:", path)
         print()
 
         path = [
             graph.get_zone_by_id(p).name
             for p in path_dijkstra
         ]
-        print("2:", path)
+        print("Dijkstra:", path)
+        print()
+
+        path = [
+            graph.get_zone_by_id(p).name
+            for p in path_astar
+        ]
+        print("A*:", path)
 
     def __print_zone(self, zone: Zone) -> None:
         res: str = ""

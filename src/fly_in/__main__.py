@@ -2,15 +2,15 @@ from .core import Program
 
 
 def main() -> None:
-    # try:
-    program: Program = Program()
-    program.run()
+    try:
+        program: Program = Program()
+        program.run()
 
-    # except (KeyboardInterrupt, EOFError):
-    #     print("\n=== Program Stopped ===\n")
-    #
-    # except Exception as e:
-    #     print(e)
+    except (KeyboardInterrupt, EOFError):
+        print("\n=== Program Stopped ===\n")
+
+    except Exception as e:
+        print(e)
 
 
 if __name__ == "__main__":
