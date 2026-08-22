@@ -6,7 +6,7 @@
 #    By: trakotoz <trakotoz@student.42antananarivo  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/08/05 03:18:43 by trakotoz          #+#    #+#              #
-#    Updated: 2026/08/12 05:39:54 by trakotoz         ###   ########.fr        #
+#    Updated: 2026/08/22 18:32:09 by trakotoz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -127,3 +127,7 @@ remove		: check
 
 tree		: check
 	@ $(UV) tree
+
+
+build		: check
+	@ $(UV) build

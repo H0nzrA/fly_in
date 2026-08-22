@@ -48,7 +48,7 @@ class ConnectionParser:
 
         except ValidationError as e:
             msg = "; ".join(
-                    f"{'.'.join(map(str, err['loc']))}: {err['msg']}"
+                    f"{err['msg']}"
                     for err in e.errors()
                 )
             raise ValueError(msg)
