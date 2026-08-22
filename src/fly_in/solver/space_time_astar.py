@@ -66,7 +66,7 @@ class SpaceTimeAStar:
             # Wait action
             wait_state: tuple[int, int] = (current, current_t + 1)
 
-            if self.__vertex_constraint(wait_state, constraints):
+            if not self.__vertex_constraint(wait_state, constraints):
                 tentative_g = current_g + 1
 
                 # Relaxation
