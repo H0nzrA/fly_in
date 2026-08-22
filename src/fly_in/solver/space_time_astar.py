@@ -42,6 +42,9 @@ class SpaceTimeAStar:
 
             # Move action
             for neighbor, weight in self.__graph.neighbors(current).items():
+                if weight is None:
+                    continue
+
                 next_t: int = current_t + weight
                 next_state: tuple[int, int] = (neighbor, next_t)
 

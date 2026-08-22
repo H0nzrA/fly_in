@@ -41,10 +41,10 @@ class Graph(BaseModel):
         if id not in self.__adjacency_list:
             raise NodeNotFoundError(id)
 
-    def neighbors(self, id: int) -> dict[int, int]:
+    def neighbors(self, id: int) -> dict[int, int | None]:
         self.__node_verification(id)
 
-        ngb: dict[int, int] = {}
+        ngb: dict[int, int | None] = {}
 
         for conn in self.__adjacency_list[id]:
 
@@ -55,7 +55,7 @@ class Graph(BaseModel):
 
         return ngb
 
-    def __zone_weight(self, id: int) -> int:
+    def __zone_weight(self, id: int) -> int | None:
         zone: Zone = self.get_zone_by_id(id)
 
         ztype: ZoneType = zone.metadata.zone
@@ -64,6 +64,8 @@ class Graph(BaseModel):
             return 2
         elif ztype == ZoneType.PRIORITY:
             return 1
+        elif ztype == ZoneType.BLOCKED:
+            return None
 
         return 1
 

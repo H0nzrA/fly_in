@@ -40,6 +40,8 @@ class Dijkstra:
                 )
 
             for neighbor, weight in graph.neighbors(current).items():
+                if weight is None:
+                    continue
                 if neighbor in unvisited:
                     # Relaxation
                     if distances[current] + weight < distances[neighbor]:
@@ -92,6 +94,8 @@ class Dijkstra:
             unvisited.remove(current)
 
             for neighbor, weight in graph.neighbors(current).items():
+                if weight is None:
+                    continue
                 if neighbor in unvisited:
                     # Relaxation
                     if distances[current] + weight < distances[neighbor]:
