@@ -25,7 +25,7 @@ class Map(BaseModel):
             )
         if self.end_hub.metadata.zone == ZoneType.BLOCKED:
             raise ValueError(
-                f"End zone {self.start_hub.name!r} "
+                f"End zone {self.end_hub.name!r} "
                 "is a blocked zone"
             )
 
