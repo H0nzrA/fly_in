@@ -13,7 +13,37 @@ class Program:
 
         graph: Graph = Graph(map=map)
         stas: SpaceTimeAStar = SpaceTimeAStar(graph)
-        del stas
+
+        path_stas: list[int] = stas.solve(
+            graph.start_node(),
+            graph.end_node(),
+            constraints=set()
+        )
+        # path_stas: list[int] = stas.solve(
+        #     graph.start_node(),
+        #     graph.end_node(),
+        #     constraints={
+        #         VertexConstraint(
+        #             node=2,
+        #             time=2
+        #         )
+        #     }
+        # )
+        # path_stas: list[int] = stas.solve(
+        #     graph.start_node(),
+        #     graph.end_node(),
+        #     constraints = {
+        #         VertexConstraint(2, 2),
+        #         VertexConstraint(3, 2),
+        #     }
+        # )
+
+        path = [
+            graph.get_zone_by_id(p).name
+            for p in path_stas
+        ]
+
+        print(" - ".join(path))
 
     def __print_zone(self, zone: Zone) -> None:
         res: str = ""

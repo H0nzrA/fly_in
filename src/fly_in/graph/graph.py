@@ -41,10 +41,10 @@ class Graph(BaseModel):
         if id not in self.__adjacency_list:
             raise NodeNotFoundError(id)
 
-    def neighbors(self, id: int) -> dict[int, float]:
+    def neighbors(self, id: int) -> dict[int, int]:
         self.__node_verification(id)
 
-        ngb: dict[int, float] = {}
+        ngb: dict[int, int] = {}
 
         for conn in self.__adjacency_list[id]:
 
