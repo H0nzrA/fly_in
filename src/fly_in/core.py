@@ -1,7 +1,8 @@
 from .cli.map_selector import MapSelector
 from .parser import Parser
 from .domain import Map, Zone, Connection
-from .graph import Graph, BFS, Dijkstra, AStar
+from .graph import Graph
+from .solver import SpaceTimeAStar
 
 
 class Program:
@@ -10,49 +11,9 @@ class Program:
         parser: Parser = Parser(path=selector.get_map_path())
         map: Map = parser.get_map()
 
-        # self.__print_zone(maps.start_hub)
-        #
-        # for hub in maps.hubs:
-        #     self.__print_zone(hub)
-        #
-        # self.__print_zone(maps.end_hub)
-
-        # print()
-        #
-        # for conn in maps.connections:
-        #     self.__print_connection(conn)
-        #
-        # self.__print_zone(maps.end_hub)
-
         graph: Graph = Graph(map=map)
-        bfs: BFS = BFS()
-        path_bfs: list[int] = bfs.solve(graph)
-
-        dijkstra: Dijkstra = Dijkstra()
-        path_dijkstra: list[int] = dijkstra.solve(graph)
-
-        astar: AStar = AStar()
-        path_astar: list[int] = astar.solve(graph)
-
-        path: list[str] = [
-            graph.get_zone_by_id(p).name
-            for p in path_bfs
-        ]
-        print("BFS:", path)
-        print()
-
-        path = [
-            graph.get_zone_by_id(p).name
-            for p in path_dijkstra
-        ]
-        print("Dijkstra:", path)
-        print()
-
-        path = [
-            graph.get_zone_by_id(p).name
-            for p in path_astar
-        ]
-        print("A*:", path)
+        stas: SpaceTimeAStar = SpaceTimeAStar(graph)
+        del stas
 
     def __print_zone(self, zone: Zone) -> None:
         res: str = ""
