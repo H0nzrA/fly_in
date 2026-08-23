@@ -28,7 +28,7 @@ class ConnectionParser:
         edge: frozenset[str] = frozenset((zone_a.name, zone_b.name))
         if edge in self.__conn_seen:
             raise ValueError(
-                f"Duplicated Connection: '{zone_a} - {zone_b}'"
+                f"Duplicated Connection: '{zone_a.name} - {zone_b.name}'"
             )
         self.__conn_seen.add(edge)
 

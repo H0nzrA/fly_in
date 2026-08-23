@@ -40,8 +40,14 @@ class SpaceTimeAStar:
             if current == goal:
                 return self.__reconstruct_path(parent, current_state)
 
-            # Move action
-            for neighbor, weight in self.__graph.neighbors(current).items():
+            # Move state
+            neighbors: dict[
+                int,
+                int | None
+            ] = self.__graph.neighbors(current).copy()
+            # Wait state
+            neighbors[current] = 1
+            for neighbor, weight in neighbors.items():
                 if weight is None:
                     continue
 
@@ -50,7 +56,7 @@ class SpaceTimeAStar:
 
                 if self.__vertex_constraint(next_state, constraints):
                     continue
-                if self.__edge_constraint(
+                if neighbor != current and self.__edge_constraint(
                     current,
                     neighbor,
                     next_t,
@@ -66,19 +72,7 @@ class SpaceTimeAStar:
                     parent[next_state] = current_state
                     open_set.add(next_state)
 
-            # Wait action
-            wait_state: tuple[int, int] = (current, current_t + 1)
-
-            if not self.__vertex_constraint(wait_state, constraints):
-                tentative_g = current_g + 1
-
-                # Relaxation
-                if tentative_g < distances.get(wait_state, inf):
-                    distances[wait_state] = tentative_g
-                    parent[wait_state] = current_state
-                    open_set.add(wait_state)
-
-        raise ValueError
+        raise ValueError("Goal is Unreachable")
 
     def __vertex_constraint(
         self,

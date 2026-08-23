@@ -1,0 +1,265 @@
+nb_drones: 20
+
+# START
+
+start_hub: start 0 0 [color=green max_drones=20]
+
+
+# ENTRY BOTTLENECK
+
+
+hub: gate_a 1 0 [color=red max_drones=2]
+hub: gate_b 2 0 [color=red max_drones=1]
+hub: gate_c 3 0 [color=red max_drones=1]
+
+
+# UPPER NETWORK
+
+
+hub: upper_a 1 1 [color=blue max_drones=3]
+hub: upper_b 2 1 [color=blue max_drones=2]
+hub: upper_c 3 1 [zone=priority color=cyan max_drones=2]
+hub: upper_d 4 1 [zone=priority color=cyan max_drones=2]
+hub: upper_e 5 1 [color=blue max_drones=2]
+hub: upper_f 6 1 [color=blue max_drones=2]
+
+
+# LOWER NETWORK
+
+
+hub: lower_a 1 -1 [color=purple max_drones=3]
+hub: lower_b 2 -1 [color=purple max_drones=2]
+hub: lower_c 3 -1 [zone=restricted color=brown max_drones=2]
+hub: lower_d 4 -1 [zone=restricted color=brown max_drones=2]
+hub: lower_e 5 -1 [color=purple max_drones=2]
+hub: lower_f 6 -1 [color=purple max_drones=2]
+
+
+# CENTRAL CROSSING
+
+
+hub: cross_a 3 2 [color=yellow max_drones=2]
+hub: cross_b 4 2 [zone=priority color=cyan max_drones=2]
+hub: cross_c 5 2 [color=yellow max_drones=2]
+
+hub: cross_d 3 -2 [color=yellow max_drones=2]
+hub: cross_e 4 -2 [zone=priority color=cyan max_drones=2]
+hub: cross_f 5 -2 [color=yellow max_drones=2]
+
+
+# RESTRICTED CENTRAL TUNNELS
+
+
+hub: tunnel_1 7 0 [zone=restricted color=red max_drones=2]
+hub: tunnel_2 8 0 [zone=restricted color=red max_drones=2]
+hub: tunnel_3 9 0 [zone=restricted color=red max_drones=1]
+
+hub: tunnel_upper 7 2 [zone=restricted color=maroon max_drones=1]
+hub: tunnel_upper2 8 2 [zone=restricted color=maroon max_drones=1]
+hub: tunnel_lower 7 -2 [zone=restricted color=maroon max_drones=1]
+hub: tunnel_lower2 8 -2 [zone=restricted color=maroon max_drones=1]
+
+
+# MID NETWORK
+
+
+hub: mid_a 10 1 [color=orange max_drones=3]
+hub: mid_b 11 1 [color=orange max_drones=2]
+hub: mid_c 12 1 [zone=priority color=cyan max_drones=2]
+
+hub: mid_d 10 -1 [color=orange max_drones=3]
+hub: mid_e 11 -1 [color=orange max_drones=2]
+hub: mid_f 12 -1 [zone=priority color=cyan max_drones=2]
+
+
+# FINAL CONVERGENCE
+
+
+hub: merge_upper 13 2 [color=violet max_drones=2]
+hub: merge_middle 13 0 [color=violet max_drones=2]
+hub: merge_lower 13 -2 [color=violet max_drones=2]
+
+hub: final_gate_1 14 0 [color=red max_drones=1]
+hub: final_gate_2 15 0 [color=red max_drones=1]
+hub: final_gate_3 16 0 [color=red max_drones=1]
+
+
+# GOAL
+
+
+end_hub: goal 17 0 [color=green max_drones=20]
+
+
+
+# START BOTTLENECK
+
+
+connection: start-gate_a [max_link_capacity=2]
+connection: gate_a-gate_b [max_link_capacity=1]
+connection: gate_b-gate_c [max_link_capacity=1]
+
+
+
+# UPPER ROUTE
+
+
+connection: gate_a-upper_a
+connection: upper_a-upper_b
+connection: upper_b-upper_c
+connection: upper_c-upper_d
+connection: upper_d-upper_e
+connection: upper_e-upper_f
+
+
+
+# LOWER ROUTE
+
+
+connection: gate_a-lower_a
+connection: lower_a-lower_b
+connection: lower_b-lower_c
+connection: lower_c-lower_d
+connection: lower_d-lower_e
+connection: lower_e-lower_f
+
+
+
+# DIRECT CENTRAL ROUTE
+
+
+connection: gate_c-tunnel_1
+connection: tunnel_1-tunnel_2
+connection: tunnel_2-tunnel_3
+
+
+
+# UPPER CROSSING
+
+
+connection: upper_c-cross_a
+connection: cross_a-cross_b
+connection: cross_b-cross_c
+
+connection: upper_f-tunnel_upper
+connection: cross_c-tunnel_upper
+
+
+
+# LOWER CROSSING
+
+
+connection: lower_c-cross_d
+connection: cross_d-cross_e
+connection: cross_e-cross_f
+
+connection: lower_f-tunnel_lower
+connection: cross_f-tunnel_lower
+
+
+
+# UPPER / LOWER CROSS LINKS
+
+
+connection: cross_a-cross_d
+connection: cross_b-cross_e
+connection: cross_c-cross_f
+
+
+
+# ESCAPE ROUTES INTO CENTRAL TUNNEL
+
+
+connection: upper_f-tunnel_1
+connection: lower_f-tunnel_1
+
+connection: cross_c-tunnel_2
+connection: cross_f-tunnel_2
+
+
+
+# TUNNEL EXIT
+
+
+connection: tunnel_3-mid_a
+connection: tunnel_upper2-mid_a
+connection: tunnel_lower2-mid_d
+
+
+
+# UPPER MID ROUTE
+
+
+connection: tunnel_upper-tunnel_upper2
+
+connection: mid_a-mid_b
+connection: mid_b-mid_c
+
+
+
+# LOWER MID ROUTE
+
+
+connection: tunnel_lower-tunnel_lower2
+
+connection: mid_d-mid_e
+connection: mid_e-mid_f
+
+
+
+# MID CROSSING
+
+
+connection: mid_a-mid_d
+connection: mid_b-mid_e
+connection: mid_c-mid_f
+
+
+
+# SECOND CROSSING
+
+
+connection: mid_c-merge_upper
+connection: mid_f-merge_lower
+
+connection: mid_b-merge_middle
+connection: mid_e-merge_middle
+
+connection: tunnel_3-merge_middle
+
+
+
+# MERGE NETWORK
+
+
+connection: merge_upper-merge_middle
+connection: merge_lower-merge_middle
+
+connection: merge_upper-final_gate_1
+connection: merge_middle-final_gate_1
+connection: merge_lower-final_gate_1
+
+
+
+# FINAL GAUNTLET
+
+
+connection: final_gate_1-final_gate_2 [max_link_capacity=1]
+connection: final_gate_2-final_gate_3 [max_link_capacity=1]
+connection: final_gate_3-goal [max_link_capacity=1]
+
+
+
+# EXTRA CHAOS / LOOPS
+
+
+connection: upper_d-cross_b
+connection: lower_d-cross_e
+
+connection: upper_e-mid_a
+connection: lower_e-mid_d
+
+connection: tunnel_1-mid_a
+connection: tunnel_1-mid_d
+
+connection: tunnel_2-mid_b
+connection: tunnel_2-mid_e

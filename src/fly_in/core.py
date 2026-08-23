@@ -2,7 +2,7 @@ from .cli.map_selector import MapSelector
 from .parser import Parser
 from .domain import Map, Zone, Connection
 from .graph import Graph
-from .solver import SpaceTimeAStar, VertexConstraint
+from .solver import SpaceTimeAStar
 
 
 class Program:
@@ -14,27 +14,10 @@ class Program:
         graph: Graph = Graph(map=map)
         stas: SpaceTimeAStar = SpaceTimeAStar(graph)
 
-        # path_stas: list[int] = stas.solve(
-        #     graph.start_node(),
-        #     graph.end_node(),
-        #     constraints=set()
-        # )
-        # path_stas: list[int] = stas.solve(
-        #     graph.start_node(),
-        #     graph.end_node(),
-        #     constraints={
-        #         VertexConstraint(
-        #             node=2,
-        #             time=2
-        #         )
-        #     }
-        # )
         path_stas: list[int] = stas.solve(
             graph.start_node(),
             graph.end_node(),
-            constraints={
-                VertexConstraint(2, 2),
-            }
+            set()
         )
 
         path = [

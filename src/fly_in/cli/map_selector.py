@@ -11,8 +11,7 @@ class MapSelector:
     def __select_map(self) -> Path:
         map_root = (
             files("fly_in")
-            .joinpath("cli")
-            .joinpath("maps")
+            .joinpath("resources", "mandatory")
         )
         difficulties = [
             d for d in map_root.iterdir()
@@ -23,7 +22,12 @@ class MapSelector:
             choice = questionary.select(
                 "Choose difficuly",
                 choices=[
-                    *sorted([d.name.capitalize() for d in difficulties]),
+                    *[
+                        "Easy",
+                        "Medium",
+                        "Hard",
+                        "Challenger"
+                    ],
                     self.EXIT
                 ]
             ).ask()
