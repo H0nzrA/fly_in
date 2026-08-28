@@ -1,4 +1,4 @@
-from ..graph import Graph
+from ..graph import Graph, WorldState
 from math import inf
 
 
@@ -6,6 +6,7 @@ class AStar:
     def solve(
         self,
         graph: Graph,
+        world: WorldState,
         source: int,
         goal: int,
         heuristic: dict[int, float]
@@ -44,6 +45,9 @@ class AStar:
                 if weight is None:
                     continue
 
+                if not self.__is_avaliable_node(neighbor, world):
+                    continue
+
                 tentative_g: float = distances[current] + weight
                 if tentative_g < distances[neighbor]:
                     distances[neighbor] = tentative_g
@@ -52,7 +56,8 @@ class AStar:
                     f_score[neighbor] = f
                     open_set.add(neighbor)
 
-        raise ValueError("Goal is Unreachable")
+        return []
+        # raise ValueError("Goal is Unreachable")
 
     def __remove_smallest_f(
         self,
@@ -79,4 +84,14 @@ class AStar:
             path.append(node)
             node = parents[node]
 
+        path.reverse()
         return path
+
+    def __is_avaliable_node(
+        self,
+        node: int,
+        world: WorldState
+    ) -> bool:
+        if world.get_node_avaliable_capacity(node) <= 0:
+            return False
+        return True

@@ -99,3 +99,7 @@ class Graph(BaseModel):
 
     def end_node(self) -> int:
         return self.map.end_hub.id
+
+    def get_node_capacity(self, id: int) -> int:
+        self.__node_verification(id)
+        return self.get_zone_by_id(id).metadata.max_drones
