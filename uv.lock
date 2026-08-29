@@ -94,7 +94,7 @@ name = "exceptiongroup"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
 wheels = [
@@ -116,11 +116,28 @@ wheels = [
 ]
 
 [[package]]
+name = "flake8-docstrings"
+version = "1.7.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "flake8" },
+    { name = "pydocstyle" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/93/24/f839e3a06e18f4643ccb81370909a497297909f15106e6af2fecdef46894/flake8_docstrings-1.7.0.tar.gz", hash = "sha256:4c8cc748dc16e6869728699e5d0d685da9a10b0ea718e090b1ba088e67a941af", size = 5995, upload-time = "2023-01-25T14:27:13.903Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3f/7d/76a278fa43250441ed9300c344f889c7fb1817080c8fb8996b840bf421c2/flake8_docstrings-1.7.0-py2.py3-none-any.whl", hash = "sha256:51f2344026da083fc084166a9353f5082b01f72901df422f74b4d953ae88ac75", size = 4994, upload-time = "2023-01-25T14:27:12.32Z" },
+]
+
+[[package]]
 name = "fly-in"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "flake8-docstrings" },
     { name = "pydantic" },
+    { name = "pyglet" },
+    { name = "pyopengl" },
+    { name = "pyopengl-accelerate" },
     { name = "questionary" },
 ]
 
@@ -133,7 +150,11 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "flake8-docstrings", specifier = ">=1.7.0" },
     { name = "pydantic", specifier = ">=2.13.4" },
+    { name = "pyglet", specifier = ">=2.1.16" },
+    { name = "pyopengl", specifier = ">=3.1.10" },
+    { name = "pyopengl-accelerate", specifier = ">=3.1.10" },
     { name = "questionary", specifier = ">=2.1.1" },
 ]
 
@@ -541,6 +562,18 @@ wheels = [
 ]
 
 [[package]]
+name = "pydocstyle"
+version = "6.3.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "snowballstemmer" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e9/5c/d5385ca59fd065e3c6a5fe19f9bc9d5ea7f2509fa8c9c22fb6b2031dd953/pydocstyle-6.3.0.tar.gz", hash = "sha256:7ce43f0c0ac87b07494eb9c0b462c0b73e6ff276807f204d6b53edc72b7e44e1", size = 36796, upload-time = "2023-01-17T20:29:19.838Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/36/ea/99ddefac41971acad68f14114f38261c1f27dac0b3ec529824ebc739bdaa/pydocstyle-6.3.0-py3-none-any.whl", hash = "sha256:118762d452a49d6b05e194ef344a55822987a462831ade91ec5c06fd2169d019", size = 38038, upload-time = "2023-01-17T20:29:18.094Z" },
+]
+
+[[package]]
 name = "pyflakes"
 version = "3.4.0"
 source = { registry = "https://pypi.org/simple" }
@@ -550,12 +583,68 @@ wheels = [
 ]
 
 [[package]]
+name = "pyglet"
+version = "2.1.16"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/8d/af/72a0c4fc95339ec590f441a591143e04acb27b2c94845735809c1630ade6/pyglet-2.1.16.tar.gz", hash = "sha256:ca90ee05532ced8330b8a8087ac2a7b69589b7fa7fb67f85aabe24aaf4ae42c0", size = 6598246, upload-time = "2026-08-01T01:32:35.895Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/23/93/b81e304f8954876fed84c5afffe83d2c1c0ceed064d5003b87fbfe9f9076/pyglet-2.1.16-py3-none-any.whl", hash = "sha256:27f9cabf97a64b15d335cf70d9e8979bbab5f84a9900a058206bcd3a2de341ae", size = 1037857, upload-time = "2026-08-01T01:32:30.566Z" },
+]
+
+[[package]]
 name = "pygments"
 version = "2.20.0"
 source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/c3/b2/bc9c9196916376152d655522fdcebac55e66de6603a76a02bca1b6414f6c/pygments-2.20.0.tar.gz", hash = "sha256:6757cd03768053ff99f3039c1a36d6c0aa0b263438fcab17520b30a303a82b5f", size = 4955991, upload-time = "2026-03-29T13:29:33.898Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f4/7e/a72dd26f3b0f4f2bf1dd8923c85f7ceb43172af56d63c7383eb62b332364/pygments-2.20.0-py3-none-any.whl", hash = "sha256:81a9e26dd42fd28a23a2d169d86d7ac03b46e2f8b59ed4698fb4785f946d0176", size = 1231151, upload-time = "2026-03-29T13:29:30.038Z" },
+]
+
+[[package]]
+name = "pyopengl"
+version = "3.1.10"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/6f/16/912b7225d56284859cd9a672827f18be43f8012f8b7b932bc4bd959a298e/pyopengl-3.1.10.tar.gz", hash = "sha256:c4a02d6866b54eb119c8e9b3fb04fa835a95ab802dd96607ab4cdb0012df8335", size = 1915580, upload-time = "2025-08-18T02:33:01.76Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/de/e4/1ba6f44e491c4eece978685230dde56b14d51a0365bc1b774ddaa94d14cd/pyopengl-3.1.10-py3-none-any.whl", hash = "sha256:794a943daced39300879e4e47bd94525280685f42dbb5a998d336cfff151d74f", size = 3194996, upload-time = "2025-08-18T02:32:59.902Z" },
+]
+
+[[package]]
+name = "pyopengl-accelerate"
+version = "3.1.10"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/6d/49/dffa946f07e84eb4666d7fb5553a1d569d54405c863ff7a19b71758712f6/pyopengl_accelerate-3.1.10.tar.gz", hash = "sha256:82751c83f0a6f732b8b5923990edc2441d38176a98756b1718e8d6c4379f5a71", size = 21930, upload-time = "2025-08-18T02:34:06.752Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/43/3d/9441102793ae06f5e4fe6b2cec573f53d247e21c044e90debd8d458bba76/pyopengl_accelerate-3.1.10-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:799b7ff0b2beaac92ec89e342147ae5f6b4e30acc60d124a48dec3fb2ee6c365", size = 423489, upload-time = "2025-08-18T02:33:09.57Z" },
+    { url = "https://files.pythonhosted.org/packages/36/5b/f8a5d33864025223f27f7c990b01a9bca046da4d810e3860008901e07fb5/pyopengl_accelerate-3.1.10-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:448f1a7f31090b029ca9a4623ebe9bffa5497a579ae1f05aff2aa3c362ca1eb0", size = 2953237, upload-time = "2025-08-18T02:33:10.904Z" },
+    { url = "https://files.pythonhosted.org/packages/ae/dc/d6fd8223eefc3317ef44f2575a1756c280727cd5e6a236cab19d1cdef1ef/pyopengl_accelerate-3.1.10-cp310-cp310-musllinux_1_2_x86_64.whl", hash = "sha256:4ee27dd972c0c633d09a76f35997ee7c3adf36ed13d78710d859245a4f968dc5", size = 2833895, upload-time = "2025-08-18T02:33:12.39Z" },
+    { url = "https://files.pythonhosted.org/packages/bc/3f/a348cb162a2d26953733f6833f2c783ffb38681bcad9521383d8d2964d67/pyopengl_accelerate-3.1.10-cp310-cp310-win32.whl", hash = "sha256:849e1d884ebb83ca016e7e0d8c336090a6236b91b8f1ad17258b31a49e0bd390", size = 332827, upload-time = "2025-08-18T02:33:14.165Z" },
+    { url = "https://files.pythonhosted.org/packages/b5/b7/1dd95f9e1a39c7b845b1198733317e2c31f2b464fdf5477e74e7fe24b981/pyopengl_accelerate-3.1.10-cp310-cp310-win_amd64.whl", hash = "sha256:d0a6129fe40c32b0ffdaa7386e80e8baae1a3312ac8bc7dc27436146938d5a94", size = 388043, upload-time = "2025-08-18T02:33:15.593Z" },
+    { url = "https://files.pythonhosted.org/packages/7a/31/88628b5a0fb965b9f2d7d69496003012a28b773c5aeda86576ef715550fe/pyopengl_accelerate-3.1.10-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:05ab94a380f5bc7a67a9e0b408f46aa369f390c6fa694e5732905a642257cb4b", size = 431962, upload-time = "2025-08-18T02:33:17.006Z" },
+    { url = "https://files.pythonhosted.org/packages/73/95/4d9465170917e8869417b6e787be6ff61ae8d1a0e38c91e236c8776b9ac2/pyopengl_accelerate-3.1.10-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:a52b001949f11879847a8d282081937b4097e6f0c479d539135587738874a2e3", size = 3190157, upload-time = "2025-08-18T02:33:18.537Z" },
+    { url = "https://files.pythonhosted.org/packages/95/cf/2f4104575d4aecb92a13c6f35ac63b80fc856521466c18de0925423912f3/pyopengl_accelerate-3.1.10-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:42317a5ac934447bc758fba67364d6fd41288068db6dfe5f57fe118b3908f58d", size = 3083316, upload-time = "2025-08-18T02:33:20.284Z" },
+    { url = "https://files.pythonhosted.org/packages/fa/3a/6d45470821cf27315b8be7642061ec0f4a2c5897779d55b777196d45b12e/pyopengl_accelerate-3.1.10-cp311-cp311-win32.whl", hash = "sha256:e3a3f92499d24241b5bdd1dba765c2f84f213c1262a6c71f298b40604987cd72", size = 333170, upload-time = "2025-08-18T02:33:21.683Z" },
+    { url = "https://files.pythonhosted.org/packages/49/a2/0cb19fc0586d6e584d24404c8384bbd2cf7e796ad20e166d34bb8c7a64f5/pyopengl_accelerate-3.1.10-cp311-cp311-win_amd64.whl", hash = "sha256:c6647eff570c3e6a4d3ca714c144d841e61f6b5b103b805700ee536e2edf862f", size = 390922, upload-time = "2025-08-18T02:33:23.042Z" },
+    { url = "https://files.pythonhosted.org/packages/4c/6b/ba5b6aeff08ef764f9625f092fef27aab07279fbffe0ec50c60359020b6e/pyopengl_accelerate-3.1.10-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:a0adc05a0585f98128dcfea80bca5fd016336a6f571a372721dc8e0406b12c2e", size = 424760, upload-time = "2025-08-18T02:33:24.431Z" },
+    { url = "https://files.pythonhosted.org/packages/a4/3d/8a6dde7092eeba0ddb0d75359e2cc1c7b61947b6f73da0bb73ac7ef9e997/pyopengl_accelerate-3.1.10-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:3282e7edd22d7126a3874c08ebcb146122031d0cea774c52f872ae56aaf17f39", size = 3279849, upload-time = "2025-08-18T02:33:25.628Z" },
+    { url = "https://files.pythonhosted.org/packages/50/4f/b4de3294248fcf0739356cc3730fb651b2106ddbe05fc528307df4331955/pyopengl_accelerate-3.1.10-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:7366b6be51aca799d6b4bfbe6a5e9e6e4b0968956d0920676498e6ac2b9ce028", size = 3140923, upload-time = "2025-08-18T02:33:27.106Z" },
+    { url = "https://files.pythonhosted.org/packages/2a/03/913312996a6345fec9436dc57069ac8c8bc31e306d3fba9e4825fc04ece2/pyopengl_accelerate-3.1.10-cp312-cp312-win32.whl", hash = "sha256:f014f2f5a0d68c751ad31c89805c043a08c423a8d6d5e7be620f6d819c6fa971", size = 328551, upload-time = "2025-08-18T02:33:28.619Z" },
+    { url = "https://files.pythonhosted.org/packages/fe/1f/6e839b7ba4823c34f762d3f3e9e8f8405bd3e210314b60df862e030ad8ad/pyopengl_accelerate-3.1.10-cp312-cp312-win_amd64.whl", hash = "sha256:6fa0963d686462dc3a03d10123af385f012001c8b020e908774df29741136bd5", size = 389822, upload-time = "2025-08-18T02:33:29.685Z" },
+    { url = "https://files.pythonhosted.org/packages/71/52/54b93275b76ea2beed7ffbf7e2e2392254c6f5927c438a2db9b972aec255/pyopengl_accelerate-3.1.10-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:bec9014f702997578b5e797d81b3e041cc5b41f0457c0184473f867c38d52665", size = 413558, upload-time = "2025-08-18T02:33:30.846Z" },
+    { url = "https://files.pythonhosted.org/packages/32/08/a491f4c74e53d22189e1aa9049b51ec44ed993e596d41c85d1732cd33ea2/pyopengl_accelerate-3.1.10-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:171e22f7d5055479b0bd7f98192525f8890af4bf19765bea7e860885cbce622e", size = 3139831, upload-time = "2025-08-18T02:33:32.415Z" },
+    { url = "https://files.pythonhosted.org/packages/d6/56/ffdf6adff65022d4df844100d6510c26def358b012c25766983f402b35ff/pyopengl_accelerate-3.1.10-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:5eea15130bc248ca83dce31736afb190c21a0186aa02cefdf4019bc0f3f857f1", size = 3000578, upload-time = "2025-08-18T02:33:33.69Z" },
+    { url = "https://files.pythonhosted.org/packages/6b/a1/6c7a6da865e07665f196ce3a443ed5d6ebd297f459bfa61288a577abaef9/pyopengl_accelerate-3.1.10-cp313-cp313-win32.whl", hash = "sha256:2354d2a2eb1266c984f061148460b2cb02146e90bd501b984d03bcc34f48b8d8", size = 325101, upload-time = "2025-08-18T02:33:34.963Z" },
+    { url = "https://files.pythonhosted.org/packages/7c/d4/93cd104a967dca51cf8ee2edf18bea2b697e9d87ece0beaa6f3ca5f5515d/pyopengl_accelerate-3.1.10-cp313-cp313-win_amd64.whl", hash = "sha256:551a46e907ea24884b6795b290b3b3b0618d217d38cf7cae9c825641375a74fe", size = 385238, upload-time = "2025-08-18T02:33:36.19Z" },
+    { url = "https://files.pythonhosted.org/packages/ae/8d/f86cb315b34fdc670c747b5041bec468258bbda55f9809f004dcbf3ff0fe/pyopengl_accelerate-3.1.10-cp314-cp314-macosx_11_0_arm64.whl", hash = "sha256:415b6ddceaa6a3fed699f1e7a6aac0de6f37e5ae19349c4ed3a7c38e17a8e09e", size = 416781, upload-time = "2025-08-18T02:33:38.021Z" },
+    { url = "https://files.pythonhosted.org/packages/5e/14/215c66da71a065734217ea53d884c5c008a35757d5d17f667799cdee8fbc/pyopengl_accelerate-3.1.10-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:d6b8aabfb227ad579f3dfabe8f0e9909026d1af540baf6405b38efa4f10fb9eb", size = 3090132, upload-time = "2025-08-18T02:33:39.517Z" },
+    { url = "https://files.pythonhosted.org/packages/20/7e/3a4fa502e6e1531af3a89b736a001886f2c2a88f83fc44b853ef177beb89/pyopengl_accelerate-3.1.10-cp314-cp314-musllinux_1_2_x86_64.whl", hash = "sha256:3d521cd41a4e62c38ec315770049dfc5c4b25e5c1debd4038cfbf75e05022f7c", size = 2963250, upload-time = "2025-08-18T02:33:41.211Z" },
+    { url = "https://files.pythonhosted.org/packages/29/64/2216644cd1d58771634ec7decbfe973f3eb6ac545224181efaaf30b15197/pyopengl_accelerate-3.1.10-cp314-cp314-win32.whl", hash = "sha256:fce5e6015ba2db99f0ebb07e4cd98ca4e70b419f186ea042cb70379228c1a339", size = 334199, upload-time = "2025-08-18T02:33:42.519Z" },
+    { url = "https://files.pythonhosted.org/packages/04/f0/da152261f49e248b1530460367ee35fcc78c0878685fc07b39a6f53223d4/pyopengl_accelerate-3.1.10-cp314-cp314-win_amd64.whl", hash = "sha256:081b6b0f39f35f750ddf60fc865556e6d01481eb818ce1482f79cfde2abe598b", size = 394806, upload-time = "2025-08-18T02:33:43.638Z" },
+    { url = "https://files.pythonhosted.org/packages/b0/25/7516f1fdeba4d13da3941b198a368cf72d6d17f9bcc48d76476f75973866/pyopengl_accelerate-3.1.10-cp314-cp314t-macosx_11_0_arm64.whl", hash = "sha256:a35503ee877b35264172903eb6c8110b021531090a4647a81252f52a68757d4d", size = 462905, upload-time = "2025-08-18T02:33:45.15Z" },
+    { url = "https://files.pythonhosted.org/packages/9b/72/d8bcd7a2264098dfe36ac15dfded7a8a513d56e4e6adfc9e651fd17cccb1/pyopengl_accelerate-3.1.10-cp314-cp314t-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:db2005912defa77a1e7390024d52b295c85a1c7ebd85ba073f1839d4bfffe855", size = 3379961, upload-time = "2025-08-18T02:33:46.602Z" },
+    { url = "https://files.pythonhosted.org/packages/17/a7/e74bf3a52d7e97f92e8a3cdd7edba7f50c6053536f54a7124772fcbbcf62/pyopengl_accelerate-3.1.10-cp314-cp314t-musllinux_1_2_x86_64.whl", hash = "sha256:fcf6827b1fff244ca6953068c17285b9eae173a20fccc1d9c193779f71b88d0f", size = 3254293, upload-time = "2025-08-18T02:33:48.105Z" },
+    { url = "https://files.pythonhosted.org/packages/fa/e4/c840324bab4efed955f258422a88a621e7462cafd627b3d2c9d314d4279d/pyopengl_accelerate-3.1.10-cp314-cp314t-win32.whl", hash = "sha256:e55ea6a85894ad74d6f09953e3d359fe27def9fed220588787993e49e42db1d0", size = 408410, upload-time = "2025-08-18T02:33:49.441Z" },
+    { url = "https://files.pythonhosted.org/packages/87/97/6312caecc721cf4e4fdac2a156dc57e403e3d9a17553d72e86653cbc92ef/pyopengl_accelerate-3.1.10-cp314-cp314t-win_amd64.whl", hash = "sha256:a2866cb65c45b013c2bf9995010824cc1b50ae91a4166746beb9ce241803e62a", size = 484776, upload-time = "2025-08-18T02:33:51.342Z" },
 ]
 
 [[package]]
@@ -586,6 +675,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/f6/45/eafb0bba0f9988f6a2520f9ca2df2c82ddfa8d67c95d6625452e97b204a5/questionary-2.1.1.tar.gz", hash = "sha256:3d7e980292bb0107abaa79c68dd3eee3c561b83a0f89ae482860b181c8bd412d", size = 25845, upload-time = "2025-08-28T19:00:20.851Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/3c/26/1062c7ec1b053db9e499b4d2d5bc231743201b74051c973dadeac80a8f43/questionary-2.1.1-py3-none-any.whl", hash = "sha256:a51af13f345f1cdea62347589fbb6df3b290306ab8930713bfae4d475a7d4a59", size = 36753, upload-time = "2025-08-28T19:00:19.56Z" },
+]
+
+[[package]]
+name = "snowballstemmer"
+version = "3.1.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/43/f8/0a71edf031f03c40db17503cb8ca78a69a171254e568e7db241b0ab57ea1/snowballstemmer-3.1.1.tar.gz", hash = "sha256:e07bbc54a0d798fe6010a12398422e62a8bfbba95c394fd0956ef58cb4d3e260", size = 123314, upload-time = "2026-06-03T00:56:40.194Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4c/07/2ebca9b11fb9be7340a818d8d6f63feaebb146be2c4afbd6061701d6df6e/snowballstemmer-3.1.1-py3-none-any.whl", hash = "sha256:7e207fa178741da09cdee59d3ecec3827ad5f92b1fc5c9ff3755b639f71f5752", size = 104164, upload-time = "2026-06-03T00:56:38.614Z" },
 ]
 
 [[package]]
