@@ -38,7 +38,7 @@ class Graph(BaseModel):
         return self
 
     def __node_verification(self, id: int) -> None:
-        if id not in self.__adjacency_list:
+        if id not in self.get_nodes():
             raise NodeNotFoundError(id)
 
     def neighbors(self, id: int) -> dict[int, int | None]:
@@ -72,7 +72,7 @@ class Graph(BaseModel):
     def get_zone_by_id(self, id: int) -> Zone:
         self.__node_verification(id)
 
-        if id == 0:
+        if id == self.map.start_hub.id:
             return self.map.start_hub
 
         if id == self.map.end_hub.id:
@@ -103,3 +103,12 @@ class Graph(BaseModel):
     def get_node_capacity(self, id: int) -> int:
         self.__node_verification(id)
         return self.get_zone_by_id(id).metadata.max_drones
+
+    def get_edge_capacity(self, a: int, b: int) -> int:
+        self.__node_verification(a)
+
+        for conn in self.__adjacency_list[a]:
+            if {conn.zone_a.id, conn.zone_b.id} == {a, b}:
+                return conn.metadata.max_link_capacity
+
+        raise NodeNotFoundError(b)

@@ -3,7 +3,7 @@ from .parser import Parser
 from pathlib import Path
 from .domain import Map
 from .graph import Graph
-from .solver import Manager
+from .solver import PrioritizedCooperative
 
 
 class Program:
@@ -15,13 +15,9 @@ class Program:
         self.__map: Map = parser.get_map()
         self.__graph: Graph = Graph(map=self.__map)
 
-    def run(self) -> None:
-        manager: Manager = Manager(
-            graph=self.__graph,
-            nb_agent=self.__map.nb_drones
+        self.__solver: PrioritizedCooperative = PrioritizedCooperative(
+            self.__graph
         )
 
-        paths: dict[int, list[int]] = manager.compute_drones()
-
-        for drone, path in paths.items():
-            print(f"{drone}: {path}")
+    def run(self) -> None:
+        self.__solver.compute(self.__map.nb_drones)

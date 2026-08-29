@@ -1,9 +1,9 @@
 from .graph import Graph
-from .world import WorldState, NodeState
+from .world import WorldState, State
 
 
 __all__: list[str] = [
     "Graph",
     "WorldState",
-    "NodeState"
+    "State"
 ]

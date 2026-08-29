@@ -1,55 +1,29 @@
-from .graph import Graph
-from pydantic import BaseModel, PrivateAttr, ConfigDict, model_validator
+State = tuple[int, int]
 
 
-class NodeState(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+class WorldState:
+    def __init__(self) -> None:
+        self.__node_usage: dict[
+            tuple[int, int],
+            int
+        ] = {}
+        self.__edge_usage: dict[
+            tuple[frozenset[int], int],
+            int
+        ] = {}
 
-    id: int
-    total_capacity: int
+    def reserve_node(self, node: int, time: int) -> None:
+        key: tuple[int, int] = (node, time)
+        self.__node_usage[key] = self.__node_usage.get(key, 0) + 1
 
-    __current_occupancy: int = PrivateAttr(default=0)
+    def reserve_edge(self, a: int, b: int, time: int) -> None:
+        key: tuple[frozenset[int], int] = (frozenset((a, b)), time)
+        self.__edge_usage[key] = self.__edge_usage.get(key, 0) + 1
 
-    def add_agent(self, nb_agent: int) -> None:
-        if self.__current_occupancy + nb_agent > self.total_capacity:
-            raise ValueError("Max Capacity Reach")
+    def node_avaliable(self, node: int, time: int, capacity: int) -> bool:
+        key: tuple[int, int] = node, time
+        return self.__node_usage.get(key, 0) < capacity
 
-        self.__current_occupancy += nb_agent
-
-    def remove_agent(self, nb_agent: int) -> None:
-        self.__current_occupancy -= nb_agent
-
-    def avaliable_capacity(self) -> int:
-        return self.total_capacity - self.__current_occupancy
-
-
-class WorldState(BaseModel):
-    graph: Graph
-
-    __nodes: dict[int, NodeState] = PrivateAttr(default_factory=dict)
-
-    @model_validator(mode="after")
-    def intialization(self) -> "WorldState":
-        self.__nodes = {
-            node: NodeState(
-                id=node,
-                total_capacity=self.graph.get_node_capacity(node)
-            )
-            for node in self.graph.get_nodes()
-        }
-
-        return self
-
-    def get_node_avaliable_capacity(self, id: int) -> int:
-        return self.__nodes[id].avaliable_capacity()
-
-    def add_agent_to_node(self, id: int, nb_agent: int) -> None:
-        self.__nodes[id].add_agent(nb_agent)
-
-    def remove_agent_to_node(self, id: int, nb_agent: int) -> None:
-        self.__nodes[id].remove_agent(nb_agent)
-
-    def node_have_room(self, id: int, nb_agent: int) -> bool:
-        nstate: NodeState = self.__nodes[id]
-
-        return nstate.avaliable_capacity() >= nb_agent
+    def edge_avaliable(self, a: int, b: int, time: int, capacity: int) -> bool:
+        key: tuple[frozenset[int], int] = (frozenset((a, b)), time)
+        return self.__edge_usage.get(key, 0) < capacity

@@ -1,10 +1,10 @@
 from .dijkstra import Dijkstra
-from .astar import AStar
-from .manager import Manager
+from .spacetime_astar import SpacetimeAStar
+from .prioritized_cooperative import PrioritizedCooperative
 
 
 __all__: list[str] = [
     "Dijkstra",
-    "AStar",
-    "Manager"
+    "SpacetimeAStar",
+    "PrioritizedCooperative"
 ]
