@@ -2,6 +2,7 @@ from ..graph import Graph, WorldState, State
 from .dijkstra import Dijkstra
 from .spacetime_astar import SpacetimeAStar
 
+
 class Agent:
     def __init__(self, id: int) -> None:
         self.id: int = id
@@ -24,7 +25,6 @@ class PrioritizedCooperative:
         )
 
         self.__graph: Graph = graph
-
 
     def compute(self, nb_agent: int) -> dict[int, list[int]]:
         agents: list[Agent] = sorted(

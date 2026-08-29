@@ -88,7 +88,12 @@ class SpacetimeAStar:
 
         raise ValueError("Goal is Unreachable")
 
-    def __is_avaliable(self, current_state: State, next_state: State, world: WorldState) -> bool:
+    def __is_avaliable(
+        self,
+        current_state: State,
+        next_state: State,
+        world: WorldState
+    ) -> bool:
         c_node, c_time = current_state
         neighbor, next_time = next_state
 
@@ -98,7 +103,7 @@ class SpacetimeAStar:
             self.__graph.get_node_capacity(neighbor)
         ):
             return False
-        
+
         if c_node == neighbor:
             return True
 
@@ -130,7 +135,7 @@ class SpacetimeAStar:
         self,
         parent: dict[State, State | None],
         state: State
-    ):
+    ) -> list[State]:
         node_state: State | None = state
         path: list[State] = []
 
