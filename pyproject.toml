@@ -5,7 +5,6 @@ description 	= "42 Fly-in, drone simulation and graph theory"
 readme 			= "README.md"
 requires-python	= ">=3.10"
 dependencies 	= [
-    "flake8-docstrings>=1.7.0",
     "pydantic>=2.13.4",
     "pyglet>=2.1.16",
     "pyopengl>=3.1.10",
@@ -31,6 +30,7 @@ packages	= ["src/fly_in"]
 [dependency-groups]
 dev	= [
     "flake8>=7.3.0",
+    "flake8-docstrings>=1.7.0",
     "mypy>=2.3.0",
     "pytest>=9.1.1",
 ]

@@ -133,7 +133,6 @@ name = "fly-in"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "flake8-docstrings" },
     { name = "pydantic" },
     { name = "pyglet" },
     { name = "pyopengl" },
@@ -144,13 +143,13 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "flake8" },
+    { name = "flake8-docstrings" },
     { name = "mypy" },
     { name = "pytest" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "flake8-docstrings", specifier = ">=1.7.0" },
     { name = "pydantic", specifier = ">=2.13.4" },
     { name = "pyglet", specifier = ">=2.1.16" },
     { name = "pyopengl", specifier = ">=3.1.10" },
@@ -161,6 +160,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "flake8", specifier = ">=7.3.0" },
+    { name = "flake8-docstrings", specifier = ">=1.7.0" },
     { name = "mypy", specifier = ">=2.3.0" },
     { name = "pytest", specifier = ">=9.1.1" },
 ]

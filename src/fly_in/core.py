@@ -2,7 +2,7 @@ from .cli import MapSelector
 from .parser import Parser
 from pathlib import Path
 from .domain import Map
-from .graph import Graph
+from .graph import Graph, State
 from .solver import PrioritizedCooperative
 
 
@@ -20,4 +20,12 @@ class Program:
         )
 
     def run(self) -> None:
-        self.__solver.compute(self.__map.nb_drones)
+        paths: dict[int, list[State]] = self.__solver.compute(
+            self.__map.nb_drones
+        )
+        for p in paths:
+            path = " - ".join(
+                f"{node}/{time}"
+                for node, time in paths[p]
+            )
+            print(f"D{p}: {path}")

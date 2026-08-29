@@ -26,21 +26,14 @@ class PrioritizedCooperative:
 
         self.__graph: Graph = graph
 
-    def compute(self, nb_agent: int) -> dict[int, list[int]]:
-        agents: list[Agent] = sorted(
-            [
-                Agent(id=i)
-                for i in range(1, nb_agent + 1)
-            ],
-            key=lambda a: a.id
-        )
-        paths: dict[Agent, list[State]] = {}
+    def compute(self, nb_agent: int) -> dict[int, list[State]]:
+        paths: dict[int, list[State]] = {}
 
         source: int = self.__graph.start_node()
         goal: int = self.__graph.end_node()
         start_time: int = 0
 
-        for agent in agents:
+        for i in range(1, nb_agent + 1):
             try:
                 path: list[State] = self.__brain.solve(
                     self.__world,
@@ -51,14 +44,13 @@ class PrioritizedCooperative:
                 )
 
             except ValueError as e:
-                raise ValueError(f"Agent {agent}: {e}")
+                raise ValueError(f"Agent id{i}: {e}")
 
             self.__commit(path)
-            print(f"Agent {agent}: {path}")
 
-            paths[agent] = path
+            paths[i] = path
 
-        return self.__construct_agents_path(paths)
+        return paths
 
     def __commit(self, path: list[State]) -> None:
         for state in path:
@@ -69,9 +61,3 @@ class PrioritizedCooperative:
                 continue
             for time in range(ta, tb):
                 self.__world.reserve_edge(a, b, time)
-
-    def __construct_agents_path(
-        self,
-        paths: dict[Agent, list[State]]
-    ) -> dict[int, list[int]]:
-        return {}
