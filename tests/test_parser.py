@@ -1,13 +1,13 @@
 from fly_in import MapSelector, Parser, Map, Zone, ZoneMetadata, Connection
 
 def test_path1() -> None:
-    path = "src/fly_in/cli/maps/hard/03_ultimate_challenge.txt"
+    path = "src/fly_in/resources/mandatory/hard/03_ultimate_challenge.txt"
     parser = Parser(path=path)
 
     fmap: Map = parser.get_map()
 
 def test_path2() -> None:
-    path = "src/fly_in/cli/maps/easy/03_basic_capacity.txt"
+    path = "src/fly_in/resources/mandatory/easy/03_basic_capacity.txt"
     parser = Parser(path=path)
 
     fmap: Map = parser.get_map()
