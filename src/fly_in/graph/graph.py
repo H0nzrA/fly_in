@@ -94,6 +94,14 @@ class Graph(BaseModel):
             self.map.end_hub.id
         ]
 
+    def is_priority_node(self, id: int) -> bool:
+        self.__node_verification(id)
+        zone: Zone = self.get_zone_by_id(id)
+
+        if zone.metadata.zone == ZoneType.PRIORITY:
+            return True
+        return False
+
     def start_node(self) -> int:
         return self.map.start_hub.id
 

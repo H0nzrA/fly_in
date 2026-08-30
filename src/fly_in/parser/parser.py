@@ -141,7 +141,7 @@ class Parser(BaseModel):
                 )
                 print(
                     f"[Warning]: {start.name!r} zone max drones capacity "
-                    "inferior capacity inferior to number of drones -- "
+                    "inferior to number of drones -- "
                     f"Updated to {nb_drones!r}"
                 )
 
@@ -149,7 +149,7 @@ class Parser(BaseModel):
                 end = self.__zparser.update_hub_capacity(end, nb_drones)
                 print(
                     f"[Warning]: {end.name!r} zone max drones capacity "
-                    "inferior capacity inferior to number of drones -- "
+                    "inferior to number of drones -- "
                     f"Updated to {nb_drones!r}"
                 )
 
