@@ -84,15 +84,22 @@ class Graph(BaseModel):
 
         raise ValueError
 
-    def get_node_position(self, id: int) -> tuple[int, int]:
-        return self.get_zone_by_id(id).coordinate
-
     def get_nodes(self) -> list[int]:
         return [
             self.map.start_hub.id,
             *[m.id for m in self.map.hubs],
             self.map.end_hub.id
         ]
+
+    def get_connection(self, a: int, b: int) -> Connection:
+        self.__node_verification(a)
+        self.__node_verification(b)
+
+        for conn in self.__adjacency_list[a]:
+            if {conn.zone_a.id, conn.zone_b.id} == {a, b}:
+                return conn
+
+        raise NodeNotFoundError(b)
 
     def is_priority_node(self, id: int) -> bool:
         self.__node_verification(id)
