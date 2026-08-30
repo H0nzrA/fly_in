@@ -6,7 +6,7 @@
 #    By: trakotoz <trakotoz@student.42antananarivo  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/08/05 03:18:43 by trakotoz          #+#    #+#              #
-#    Updated: 2026/08/22 18:32:09 by trakotoz         ###   ########.fr        #
+#    Updated: 2026/08/30 09:25:59 by trakotoz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,7 +47,7 @@ help		:
 	@ echo "$(C_BLUE)Usage: make [target] $(C_RESET)"
 	@ echo "$(C_GREEN)make install$(C_RESET)        Install all the dependencies"
 	@ echo "$(C_GREEN)make run$(C_RESET)            Run the Applications"
-	@ echo "$(C_GREEN)make test$(C_RESET)			Run all Applications test under pytest module"
+	@ echo "$(C_GREEN)make test$(C_RESET)           Run all Applications test under pytest module"
 	@ echo "$(C_GREEN)make lint$(C_RESET)           Run flake8 and mypy (standard version)"
 	@ echo "$(C_GREEN)make lint-strict$(C_RESET)    Run flake8 and mypy (strict version)"
 	@ echo "$(C_GREEN)make clean$(C_RESET)          Remove python and mypy cache"
