@@ -4,6 +4,7 @@ from pathlib import Path
 from .domain import Map
 from .graph import Graph, State
 from .solver import PrioritizedCooperative
+from .logger import Output
 
 
 class Program:
@@ -19,6 +20,8 @@ class Program:
             self.__graph
         )
 
+        self.__output: Output = Output(self.__graph)
+
     def run(self) -> None:
         paths: dict[int, list[State]] = self.__solver.compute(
             self.__map.nb_drones
@@ -29,3 +32,7 @@ class Program:
                 for node, time in paths[p]
             )
             print(f"D{p}: {path}")
+
+        turns_path: dict[int, list[str]] = self.__output.drones_paths(paths)
+        for p in turns_path:
+            print(turns_path[p])

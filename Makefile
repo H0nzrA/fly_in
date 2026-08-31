@@ -6,7 +6,7 @@
 #    By: trakotoz <trakotoz@student.42antananarivo  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/08/05 03:18:43 by trakotoz          #+#    #+#              #
-#    Updated: 2026/08/30 09:25:59 by trakotoz         ###   ########.fr        #
+#    Updated: 2026/08/31 21:07:11 by trakotoz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -53,6 +53,7 @@ help		:
 	@ echo "$(C_GREEN)make clean$(C_RESET)          Remove python and mypy cache"
 	@ echo "$(C_GREEN)make fclean$(C_RESET)         clean + remove virtualenv/dist"
 	@ echo "$(C_GREEN)make re$(C_RESET)             fclean + install (rebuild of the project)"
+	@ echo "$(C_GREEN)make build$(C_RESET)          Build project as a distribution package"
 
 
 all			: install
