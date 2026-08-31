@@ -17,3 +17,7 @@ env
 
 *.swp
 tmp/
+
+# Logger files
+logs/
+*.log

@@ -1,16 +1,32 @@
 from ..graph import Graph, State
-from ..domain import Zone, Map
+from pathlib import Path
+from ..utils import write_content
 
 
 class Output:
-    def __init__(self, graph: Graph) -> None:
+    def __init__(self, graph: Graph, path: str | Path) -> None:
         self.__graph: Graph = graph
+        self.__path: str | Path = path
 
-    def drones_paths(
+    def make_output(self, paths: dict[int, list[State]]) -> None:
+        per_turns: dict[int, list[str]] = self.__drones_paths(paths)
+        total_turn: int = self.__get_total_turn(paths)
+
+        per_content: list[str] = []
+        for turn in per_turns.values():
+            res: str = " ".join(turn)
+            per_content.append(res)
+
+        content: str = "\n".join(per_content)
+        content += "\n\n" + f"Total turn: {total_turn}"
+
+        write_content(self.__path, content)
+
+    def __drones_paths(
         self,
         paths: dict[int, list[State]],
     ) -> dict[int, list[str]]:
-        total_turn: int = self.get_total_turn(paths)
+        total_turn: int = self.__get_total_turn(paths)
         turns: dict[int, list[str]] = {
             i: []
             for i in range(1, total_turn + 1)
@@ -32,7 +48,6 @@ class Output:
                     ):
                         continue
                     has_started = True
-
 
                 delta: int = next_time - current_time
                 drone: str = f"D{drone_id}"
@@ -59,7 +74,7 @@ class Output:
 
         return turns
 
-    def get_total_turn(self, paths: dict[int, list[State]]) -> int:
+    def __get_total_turn(self, paths: dict[int, list[State]]) -> int:
         return max(
             state[1]
             for path in paths.values()

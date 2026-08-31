@@ -1,4 +1,10 @@
-from pydantic import BaseModel, ConfigDict, PrivateAttr, ValidationError
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    PrivateAttr,
+    ValidationError,
+    model_validator
+)
 from pathlib import Path
 from ..domain import (
     Zone,
@@ -10,6 +16,7 @@ from typing import Any
 from enum import Enum
 from .zone_parser import ZoneParser
 from .connection_parser import ConnectionParser
+from ..cli import Reporter
 
 
 class ParserError(Exception):
@@ -18,7 +25,7 @@ class ParserError(Exception):
         line_num: int,
         msg: str
     ) -> None:
-        err: str = f"Parsing Error on [Line {line_num}]: {msg}"
+        err: str = f"Line {line_num}: {msg}"
         super().__init__(err)
 
 
@@ -36,10 +43,17 @@ class Parser(BaseModel):
         default_factory=ConnectionParser
     )
 
+    @model_validator(mode="after")
+    def initializer(self) -> "Parser":
+        self.__reporter: Reporter = Reporter("Parser")
+        return self
+
     def __get_file_content(self) -> list[str]:
         return self.path.read_text().split("\n")
 
     def __parse(self) -> Map:
+        self.__reporter.info("Starting parsing ...")
+
         lines: list[str] = self.__get_file_content()
         res: dict[str, Any] = {}
         hubs: list[Zone] = []
@@ -139,7 +153,7 @@ class Parser(BaseModel):
                     start,
                     nb_drones
                 )
-                print(
+                self.__reporter.warning(
                     f"[Warning]: {start.name!r} zone max drones capacity "
                     "inferior to number of drones -- "
                     f"Updated to {nb_drones!r}"
@@ -147,7 +161,7 @@ class Parser(BaseModel):
 
             if end.metadata.max_drones < nb_drones:
                 end = self.__zparser.update_hub_capacity(end, nb_drones)
-                print(
+                self.__reporter.warning(
                     f"[Warning]: {end.name!r} zone max drones capacity "
                     "inferior to number of drones -- "
                     f"Updated to {nb_drones!r}"
@@ -172,3 +186,11 @@ class Parser(BaseModel):
                     for err in e.errors()
                 )
             raise ValueError(msg)
+
+        except ParserError as e:
+            self.__reporter.error(str(e))
+            raise ValueError
+
+        except ValueError as e:
+            self.__reporter.error(str(e))
+            raise Exception

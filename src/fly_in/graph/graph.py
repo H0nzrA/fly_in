@@ -5,6 +5,7 @@ from ..domain import (
     ZoneType,
     Connection
 )
+from ..cli import Reporter
 
 
 class NodeNotFoundError(ValueError):
@@ -26,7 +27,10 @@ class Graph(BaseModel):
     )
 
     @model_validator(mode="after")
-    def __adjacency_extraction(self) -> "Graph":
+    def initializer(self) -> "Graph":
+        self.__reporter: Reporter = Reporter("Graph")
+
+        self.__reporter.info("Adjacency list initialization ...")
         for conn in self.map.connections:
             self.__adjacency_list.setdefault(
                 conn.zone_a.id, set()
@@ -39,7 +43,8 @@ class Graph(BaseModel):
 
     def __node_verification(self, id: int) -> None:
         if id not in self.get_nodes():
-            raise NodeNotFoundError(id)
+            self.__reporter.error(f"No zone with id {id!r} found in list")
+            raise ValueError
 
     def neighbors(self, id: int) -> dict[int, int | None]:
         self.__node_verification(id)

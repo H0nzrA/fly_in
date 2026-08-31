@@ -17,6 +17,11 @@ class ConnectionParser:
         prop: list[str] = value.split()
         if len(prop) > 2:
             raise ValueError("Too Many value given for Connection data")
+        if len(prop) == 0:
+            raise ValueError(
+                "Invalid writting. "
+                "Expect: <zone>-<zone>"
+            )
 
         conn: list[str] = prop[0].split("-")
         if len(conn) != 2:

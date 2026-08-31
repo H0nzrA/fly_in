@@ -2,11 +2,15 @@ import sys
 import questionary
 from pathlib import Path
 from importlib.resources import files
+from .reporter import Reporter
 
 
 class MapSelector:
     BACK = "Go BACK"
     EXIT = "EXIT"
+
+    def __init__(self) -> None:
+        self.__reporter: Reporter = Reporter("Map Selector")
 
     def __select_map(self) -> Path:
         map_root = (
@@ -67,9 +71,13 @@ class MapSelector:
         length: int = len(sys.argv) - 1
 
         if length == 1:
+            self.__reporter.warning("Selected map is the given argument.")
             return Path(sys.argv[1])
 
         if length > 1:
             raise ValueError("To many argument given")
 
-        return self.__select_map()
+        self.__reporter.info("Mandatory map selection ...")
+        path: Path = self.__select_map()
+        self.__reporter.info("Selection finished.")
+        return path
