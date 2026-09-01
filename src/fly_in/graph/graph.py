@@ -31,13 +31,13 @@ class Graph(BaseModel):
         self.__reporter: Reporter = Reporter("Graph")
 
         self.__reporter.info("Adjacency list initialization ...")
+        self.__adjacency_list = {
+            i: set()
+            for i in range(self.map.nb_drones)
+        }
         for conn in self.map.connections:
-            self.__adjacency_list.setdefault(
-                conn.zone_a.id, set()
-            ).add(conn)
-            self.__adjacency_list.setdefault(
-                conn.zone_b.id, set()
-            ).add(conn)
+            self.__adjacency_list[conn.zone_a.id].add(conn)
+            self.__adjacency_list[conn.zone_b.id].add(conn)
 
         return self
 
