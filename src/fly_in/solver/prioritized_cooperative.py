@@ -2,14 +2,7 @@ from ..graph import Graph, WorldState, State
 from .dijkstra import Dijkstra
 from .spacetime_astar import SpacetimeAStar
 from ..cli import Reporter, loading
-
-
-class Agent:
-    def __init__(self, id: int) -> None:
-        self.id: int = id
-
-    def __repr__(self) -> str:
-        return f"D{self.id}"
+from ..utils import SolverError
 
 
 class PrioritizedCooperative:
@@ -31,6 +24,9 @@ class PrioritizedCooperative:
         self.__graph: Graph = graph
 
     def compute(self, nb_agent: int) -> dict[int, list[State]]:
+        if len(self.__heuristic) != nb_agent:
+            raise SolverError("End is unreachable")
+
         self.__reporter.info("Start Solving ...\n")
         paths: dict[int, list[State]] = {}
 
@@ -50,7 +46,8 @@ class PrioritizedCooperative:
                 )
 
             except ValueError as e:
-                raise ValueError(f"Agent id{i}: {e}")
+                self.__reporter.error(f"Agent id{i}: {e}")
+                raise SolverError
 
             self.__commit(path)
 

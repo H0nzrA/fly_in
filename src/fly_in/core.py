@@ -5,7 +5,7 @@ from .domain import Map
 from .graph import Graph, State
 from .solver import PrioritizedCooperative
 from .logger import Output, Benchmark
-from .utils import Syntax
+from .utils import Syntax, FlyInError
 from collections.abc import Callable
 
 
@@ -14,8 +14,8 @@ class Program:
         self.introduction()
         self.__reporter: Reporter = Reporter(source="Core")
 
+    def setup(self) -> None:
         self.__reporter.info("Setup environement ...")
-
         self.__benchmark: Benchmark = Benchmark(path="./logs/benchmark.log")
 
         selector: MapSelector = MapSelector()
@@ -32,17 +32,14 @@ class Program:
         self.__output: Output = Output(
             self.__graph, "./logs/output.log")
 
-        self.__setup_benchmark()
-
-        self.__reporter.info("Setup Done.")
-
-    def __setup_benchmark(self) -> None:
         self.__compute_solver: Callable[
             [int],
             dict[int, list[State]]
         ] = self.__benchmark.mark_memory("Solver")(
             self.__solver.compute
         )
+
+        self.__reporter.info("Setup Done.")
 
     def introduction(self) -> None:
         intro: str = "\n".join(
@@ -62,14 +59,14 @@ class Program:
 
     def run(self) -> None:
         try:
+            self.setup()
             paths: dict[int, list[State]] = self.__compute_solver(
                 self.__map.nb_drones
             )
 
             self.__output.make_output(paths)
-
-        except Exception as e:
-            self.__reporter.error(str(e))
-
-        finally:
             self.__benchmark.output_benchmark()
+
+        except FlyInError as e:
+            self.__reporter.error(str(e))
+            return

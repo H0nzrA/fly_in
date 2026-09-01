@@ -9,9 +9,9 @@ def main() -> None:
     except (KeyboardInterrupt, EOFError):
         print("\n=== Program Stopped ===\n")
 
-    except Exception as e:
-        print(e)
-        print("\n=== Program Stopped ===\n")
+    # except Exception as e:
+    #     print(e)
+    #     print("\n=== Program Stopped ===\n")
 
 
 if __name__ == "__main__":

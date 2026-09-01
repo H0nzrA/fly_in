@@ -1,5 +1,6 @@
 from ..graph import Graph, WorldState, State
 from math import inf
+from ..utils import SolverError
 
 
 Cost = tuple[float, int]  # turn, -priority
@@ -96,7 +97,7 @@ class SpacetimeAStar:
                         tentative_cost
                     )
 
-        raise ValueError("Goal is Unreachable")
+        raise SolverError("Goal is Unreachable")
 
     def __is_avaliable(
         self,

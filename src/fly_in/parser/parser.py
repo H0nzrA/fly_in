@@ -17,16 +17,7 @@ from enum import Enum
 from .zone_parser import ZoneParser
 from .connection_parser import ConnectionParser
 from ..cli import Reporter
-
-
-class ParserError(Exception):
-    def __init__(
-        self,
-        line_num: int,
-        msg: str
-    ) -> None:
-        err: str = f"Line {line_num}: {msg}"
-        super().__init__(err)
+from ..utils import FlyInError, ParserError
 
 
 class Key(Enum):
@@ -185,12 +176,8 @@ class Parser(BaseModel):
                     f"{err['msg']}"
                     for err in e.errors()
                 )
-            raise ValueError(msg)
+            raise FlyInError(msg)
 
         except ParserError as e:
             self.__reporter.error(str(e))
-            raise ValueError
-
-        except ValueError as e:
-            self.__reporter.error(str(e))
-            raise Exception
+            raise FlyInError
