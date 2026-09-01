@@ -4,8 +4,9 @@ from pathlib import Path
 from .domain import Map
 from .graph import Graph, State
 from .solver import PrioritizedCooperative
-from .logger import Output
+from .logger import Output, Benchmark
 from .utils import Syntax
+from collections.abc import Callable
 
 
 class Program:
@@ -14,6 +15,8 @@ class Program:
         self.__reporter: Reporter = Reporter(source="Core")
 
         self.__reporter.info("Setup environement ...")
+
+        self.__benchmark: Benchmark = Benchmark(path="./logs/benchmark.log")
 
         selector: MapSelector = MapSelector()
         path: Path = selector.get_map_path()
@@ -29,7 +32,17 @@ class Program:
         self.__output: Output = Output(
             self.__graph, "./logs/output.log")
 
+        self.__setup_benchmark()
+
         self.__reporter.info("Setup Done.")
+
+    def __setup_benchmark(self) -> None:
+        self.__compute_solver: Callable[
+            [int],
+            dict[int, list[State]]
+        ] = self.__benchmark.mark_memory("Solver")(
+            self.__solver.compute
+        )
 
     def introduction(self) -> None:
         intro: str = "\n".join(
@@ -49,7 +62,7 @@ class Program:
 
     def run(self) -> None:
         try:
-            paths: dict[int, list[State]] = self.__solver.compute(
+            paths: dict[int, list[State]] = self.__compute_solver(
                 self.__map.nb_drones
             )
 
@@ -57,3 +70,6 @@ class Program:
 
         except Exception as e:
             self.__reporter.error(str(e))
+
+        finally:
+            self.__benchmark.output_benchmark()

@@ -22,7 +22,8 @@ def loading(count: int, total: int) -> None:
 
     print(
         (Syntax.DARK_CYAN + "█" + Syntax.RESET) * filled
-        + f"{Syntax.DIM}█{Syntax.RESET}" * (block - filled)
+        + f"{Syntax.DIM}█{Syntax.RESET}" * (block - filled) +
+        f" {count/total * 100:.2f}%"
     )
 
 
