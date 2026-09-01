@@ -16,7 +16,6 @@ class Program:
 
     def setup(self) -> None:
         self.__reporter.info("Setup environement ...")
-        self.__benchmark: Benchmark = Benchmark(path="./logs/benchmark.log")
 
         selector: MapSelector = MapSelector()
         path: Path = selector.get_map_path()
@@ -27,6 +26,12 @@ class Program:
 
         self.__solver: PrioritizedCooperative = PrioritizedCooperative(
             self.__graph
+        )
+
+        self.__benchmark: Benchmark = Benchmark(
+            "./logs/benchmark.log",
+            self.__map,
+            path
         )
 
         self.__output: Output = Output(

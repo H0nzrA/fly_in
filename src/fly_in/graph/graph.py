@@ -29,11 +29,11 @@ class Graph(BaseModel):
     @model_validator(mode="after")
     def initializer(self) -> "Graph":
         self.__reporter: Reporter = Reporter("Graph")
-
         self.__reporter.info("Adjacency list initialization ...")
+
         self.__adjacency_list = {
-            i: set()
-            for i in range(self.map.nb_drones)
+            node: set()
+            for node in range(len(self.map.hubs) + 2)
         }
         for conn in self.map.connections:
             self.__adjacency_list[conn.zone_a.id].add(conn)

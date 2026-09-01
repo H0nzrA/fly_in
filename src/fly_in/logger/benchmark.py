@@ -5,6 +5,7 @@ import tracemalloc
 from dataclasses import dataclass
 import time
 from datetime import timedelta
+from ..domain import Map
 
 
 @dataclass
@@ -15,9 +16,30 @@ class MemoryState:
 
 
 class Benchmark:
-    def __init__(self, path: str | Path) -> None:
+    def __init__(
+        self,
+        path: str | Path,
+        _map: Map,
+        map_file: str | Path
+    ) -> None:
         self.__path: Path = Path(path)
         self.__saved: dict[str, MemoryState] = {}
+        self.__map_info: str = self.__extract_map_mark(_map, map_file)
+
+    def __extract_map_mark(self, _map: Map, map_file: str | Path) -> str:
+        res: str = ""
+
+        title: str = str(map_file)
+        nb_drone: str = str(_map.nb_drones)
+        nb_zone: str = str(len(_map.hubs) + 2)
+        nb_edge: str = str(len(_map.connections))
+
+        res += f"- Map file: {title}\n\n"
+        res += f"- Number of drones: {nb_drone}\n"
+        res += f"- Number of zones: {nb_zone}\n"
+        res += f"- Number of edge: {nb_edge}\n"
+
+        return res
 
     def mark_memory(self, name: str) -> Callable[..., Any]:
         def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -62,7 +84,12 @@ class Benchmark:
         title: str,
         state: MemoryState
     ) -> str:
-        res: str = f"=== {title} ===\n"
+        res: str = "=" * 30
+        res += "\n" + self.__map_info + "\n"
+        res += "=" * 30
+        res += "\n\n"
+
+        res += f"\n--- {title} ---\n"
         res += f"- Current: {state.current:.2f}MB\n"
         res += f"- Peak: {state.peak:.2f}MB\n"
 

@@ -24,9 +24,6 @@ class PrioritizedCooperative:
         self.__graph: Graph = graph
 
     def compute(self, nb_agent: int) -> dict[int, list[State]]:
-        if len(self.__heuristic) != nb_agent:
-            raise SolverError("End is unreachable")
-
         self.__reporter.info("Start Solving ...\n")
         paths: dict[int, list[State]] = {}
 
