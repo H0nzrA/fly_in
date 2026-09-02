@@ -14,3 +14,7 @@ class ParserError(FlyInError):
 
 class SolverError(FlyInError):
     pass
+
+
+class VisualError(FlyInError):
+    pass

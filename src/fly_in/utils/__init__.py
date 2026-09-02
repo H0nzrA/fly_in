@@ -1,6 +1,6 @@
 from .file_manager import write_content
 from .syntax import Syntax
-from .errors import FlyInError, ParserError, SolverError
+from .errors import FlyInError, ParserError, SolverError, VisualError
 
 
 __all__: list[str] = [
@@ -8,5 +8,6 @@ __all__: list[str] = [
     "Syntax",
     "FlyInError",
     "ParserError",
-    "SolverError"
+    "SolverError",
+    "VisualError"
 ]

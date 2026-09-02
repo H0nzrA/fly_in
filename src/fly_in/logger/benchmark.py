@@ -69,7 +69,9 @@ class Benchmark:
         return decorator
 
     def output_benchmark(self) -> None:
-        content: str = "\n\n".join(
+
+        content: str = self.__format_title()
+        content += "\n\n".join(
             [
                 self.__format_output(title, bench)
                 for title, bench in self.__saved.items()
@@ -84,16 +86,19 @@ class Benchmark:
         title: str,
         state: MemoryState
     ) -> str:
-        res: str = "=" * 30
-        res += "\n" + self.__map_info + "\n"
-        res += "=" * 30
-        res += "\n\n"
 
-        res += f"\n--- {title} ---\n"
+        res: str = f"\n--- {title} ---\n"
         res += f"- Current: {state.current:.2f}MB\n"
         res += f"- Peak: {state.peak:.2f}MB\n"
 
         t: timedelta = timedelta(seconds=state.execution)
         res += f"- Executed in: {t}"
 
+        return res
+
+    def __format_title(self) -> str:
+        res: str = "=" * 30
+        res += "\n" + self.__map_info + "\n"
+        res += "=" * 30
+        res += "\n\n"
         return res

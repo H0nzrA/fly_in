@@ -8,6 +8,7 @@ from .logger import Output, Benchmark
 from .utils import Syntax, FlyInError
 from collections.abc import Callable
 from argparse import Namespace
+from .visual import VisualApp
 
 
 class Program:
@@ -49,6 +50,18 @@ class Program:
             self.__solver.compute
         )
 
+        self.__visual: VisualApp = VisualApp(
+            width=600,
+            height=400,
+            title="Fly-In"
+        )
+        self.__visual_run: Callable[
+            [dict[int, list[State]]],
+            None
+        ] = self.__benchmark.mark_memory("Visual")(
+            self.__visual.run
+        )
+
         self.__reporter.info("Setup Done.")
 
     def introduction(self) -> None:
@@ -73,8 +86,8 @@ class Program:
             paths: dict[int, list[State]] = self.__compute_solver(
                 self.__map.nb_drones
             )
-
             self.__output.make_output(paths)
+            self.__visual_run(paths)
             self.__benchmark.output_benchmark()
 
         except FlyInError as e:
