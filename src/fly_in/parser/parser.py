@@ -40,7 +40,17 @@ class Parser(BaseModel):
         return self
 
     def __get_file_content(self) -> list[str]:
-        return self.path.read_text().split("\n")
+        try:
+            content: list[str] = self.path.read_text().split("\n")
+            return content
+
+        except (
+            FileNotFoundError,
+            OSError,
+            IsADirectoryError,
+            PermissionError
+        ) as e:
+            raise FlyInError(e)
 
     def __parse(self) -> Map:
         self.__reporter.info("Starting parsing ...")
