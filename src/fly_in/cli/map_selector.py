@@ -1,4 +1,3 @@
-import sys
 import questionary
 from pathlib import Path
 from importlib.resources import files
@@ -67,15 +66,10 @@ class MapSelector:
 
                 return Path(selected_difficulty / selected)
 
-    def get_map_path(self) -> Path:
-        length: int = len(sys.argv) - 1
-
-        if length == 1:
+    def get_map_path(self, _input: str | None) -> Path:
+        if _input:
             self.__reporter.warning("Selected map is the given argument.")
-            return Path(sys.argv[1])
-
-        if length > 1:
-            raise ValueError("To many argument given")
+            return Path(_input)
 
         self.__reporter.info("Mandatory map selection ...")
         path: Path = self.__select_map()

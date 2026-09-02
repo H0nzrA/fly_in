@@ -2,7 +2,7 @@ class FlyInError(Exception):
     pass
 
 
-class ParserError(Exception):
+class ParserError(FlyInError):
     def __init__(
         self,
         line_num: int,

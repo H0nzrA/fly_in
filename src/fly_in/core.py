@@ -1,4 +1,4 @@
-from .cli import MapSelector, Reporter
+from .cli import MapSelector, Reporter, argument_parser
 from .parser import Parser
 from pathlib import Path
 from .domain import Map
@@ -7,6 +7,7 @@ from .solver import PrioritizedCooperative
 from .logger import Output, Benchmark
 from .utils import Syntax, FlyInError
 from collections.abc import Callable
+from argparse import Namespace
 
 
 class Program:
@@ -17,8 +18,10 @@ class Program:
     def setup(self) -> None:
         self.__reporter.info("Setup environement ...")
 
+        arguments: Namespace = argument_parser()
+
         selector: MapSelector = MapSelector()
-        path: Path = selector.get_map_path()
+        path: Path = selector.get_map_path(arguments.input)
         parser: Parser = Parser(path=path)
 
         self.__map: Map = parser.get_map()
@@ -29,13 +32,15 @@ class Program:
         )
 
         self.__benchmark: Benchmark = Benchmark(
-            "./logs/benchmark.log",
+            arguments.benchmark,
             self.__map,
             path
         )
 
         self.__output: Output = Output(
-            self.__graph, "./logs/output.log")
+            self.__graph,
+            arguments.output
+        )
 
         self.__compute_solver: Callable[
             [int],
