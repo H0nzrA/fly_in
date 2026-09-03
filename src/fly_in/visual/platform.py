@@ -19,7 +19,7 @@ class Platform:
 
         # Windows and key event handling
         self.__create_window(width, height, title)
-        glfw.set_key_callback(self.__window, self.__on_key)
+        self.__set_callback()
 
         self.__exit_key: set[int] = {
             glfw.KEY_Q,
@@ -50,9 +50,14 @@ class Platform:
         self.__reporter.info("Windows created")
 
     def __terminate(self) -> None:
-        glfw.destroy_window(self.__window)
+        if self.__window is not None:
+            glfw.destroy_window(self.__window)
         glfw.terminate()
         self.__reporter.info("GLFW terminated")
+
+    def __set_callback(self) -> None:
+        glfw.set_key_callback(self.__window, self.__on_key)
+        glfw.set_mouse_button_callback(self.__window, self.__on_mouse)
 
     def __on_key(
         self,
@@ -66,11 +71,21 @@ class Platform:
             self.__reporter.info("Quitting: Going down now")
             glfw.set_window_should_close(window, True)
 
-    def run(self) -> None:
-        while not glfw.window_should_close(self.__window):
-            glfw.poll_events()
+    def __on_mouse(
+        self,
+        window: Any,
+        button: int,
+        action: int,
+        mods: int
+    ) -> None:
+        if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
+            self.__reporter.info("Left Button pressed")
 
-        self.__terminate()
+    def pool_events(self) -> None:
+        glfw.poll_events()
+
+    def should_close(self) -> bool:
+        return bool(glfw.window_should_close(self.__window))
 
     def get_window(self) -> Any:
         return self.__window

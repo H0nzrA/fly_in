@@ -50,15 +50,11 @@ class Program:
             self.__solver.compute
         )
 
-        self.__visual: VisualApp = VisualApp(
-            width=600,
-            height=400,
-            title="Fly-In"
-        )
+        self.__visual: VisualApp = VisualApp(title="Fly-In")
         self.__visual_run: Callable[
             [dict[int, list[State]]],
             None
-        ] = self.__benchmark.mark_memory("Visual")(
+        ] = self.__benchmark.mark_memory("Visual Platform")(
             self.__visual.run
         )
 
