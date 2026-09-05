@@ -5,6 +5,7 @@ from dataclasses import dataclass
 import time
 from datetime import timedelta
 from ..domain import Map
+from ..utils import write_content
 
 
 @dataclass
@@ -64,7 +65,6 @@ class Benchmark:
             self.__saved[name] = state
 
     def output_benchmark(self) -> None:
-
         content: str = self.__format_title()
         content += "\n\n".join(
             [
@@ -73,8 +73,7 @@ class Benchmark:
             ]
         )
 
-        with self.__path.open("w") as f:
-            f.write(content)
+        write_content(self.__path, content)
 
     def __format_output(
         self,
