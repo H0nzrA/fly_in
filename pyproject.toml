@@ -32,7 +32,9 @@ dev	= [
     "flake8>=7.3.0",
     "flake8-docstrings>=1.7.0",
     "mypy>=2.3.0",
-    "pyautogui>=0.9.54",
     "pytest>=9.1.1",
-    "types-pyautogui>=0.9.3.20260508",
 ]
+
+[[tool.mypy.overrides]]
+module = ["OpenGL.*"]
+ignore_missing_imports = true

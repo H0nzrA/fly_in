@@ -5,12 +5,7 @@ from .input import Key, MouseButton
 
 
 class Platform:
-    def __init__(
-        self,
-        width: int,
-        height: int,
-        title: str
-    ) -> None:
+    def __init__(self, title: str) -> None:
         # Initialization
         if not glfw.init():
             raise VisualError("Failed to initialize GLFW")
@@ -19,15 +14,27 @@ class Platform:
         self.__mouse_state: set[MouseButton] = set()
 
         # Windows and key event handling
-        self.__create_window(width, height, title)
+        self.__create_window(title)
         self.__set_callback()
 
-    def __create_window(
-        self,
-        width: int,
-        height: int,
-        title: str
-    ) -> None:
+        # Renderer context
+        glfw.make_context_current(self.__window)
+
+    def __create_window(self, title: str) -> None:
+        monitor = glfw.get_primary_monitor()
+        if monitor is None:
+            raise VisualError("Failed to get primary monitor")
+
+        mode = glfw.get_video_mode(monitor)
+        if mode is None:
+            raise VisualError("Failed to get monitor video mode")
+
+        screen_width: int = mode.size.width
+        screen_height: int = mode.size.height
+
+        width = screen_width - screen_width // 6
+        height = screen_height - screen_height // 6
+
         self.__window: Any = glfw.create_window(
             width=width,
             height=height,
@@ -92,6 +99,9 @@ class Platform:
 
     def close_window(self) -> None:
         glfw.set_window_should_close(self.__window, True)
+
+    def swap_buffer(self) -> None:
+        glfw.swap_buffers(self.__window)
 
     def is_key_pressed(self, key: Key) -> bool:
         return key in self.__key_state

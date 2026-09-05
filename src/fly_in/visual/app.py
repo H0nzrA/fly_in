@@ -1,16 +1,9 @@
 from .platform import Platform
 from ..graph import State
-import pyautogui
 from .input import Key, MouseButton
 from ..cli import Reporter
 from ..utils import VisualError, FlyInError
-
-
-def get_window_size(width: int, height: int, factor: int) -> tuple[int, int]:
-    w_minus: int = width - (width // factor)
-    h_minus: int = height - (height // factor)
-
-    return w_minus, h_minus
+from .renderer import Renderer
 
 
 class VisualApp:
@@ -22,20 +15,16 @@ class VisualApp:
         self.__title: str = title
 
     def __setup(self) -> None:
-        screen_width, screen_height = pyautogui.size()
-        window_width, window_height = get_window_size(
-            screen_width, screen_height,
-            6
-        )
+        # Platform initialization
         try:
-            self.__platform: Platform = Platform(
-                window_width,
-                window_height,
-                self.__title
-            )
+            self.__platform: Platform = Platform(self.__title)
         except VisualError as e:
             self.__reporter.error(str(e))
             raise FlyInError
+
+        # Renderer initialization
+        self.__renderer: Renderer = Renderer()
+
         self.__reporter.info("Successfully initialize")
 
     def __update(self) -> None:
@@ -60,6 +49,7 @@ class VisualApp:
         while not self.__platform.should_close():
             self.__platform.poll_events()
             self.__update()
+            self.__renderer.render()
+            self.__platform.swap_buffer()
 
-            # TODO: Adding rendering
         self.__reporter.info("Visual terminated")
