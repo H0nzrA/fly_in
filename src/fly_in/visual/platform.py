@@ -1,7 +1,7 @@
 import glfw
 from ..utils import VisualError
-from ..cli import Reporter
 from typing import Any
+from .input import Key, MouseButton
 
 
 class Platform:
@@ -12,21 +12,15 @@ class Platform:
         title: str
     ) -> None:
         # Initialization
-        self.__reporter: Reporter = Reporter("Platform")
         if not glfw.init():
-            self.__reporter.error("Failed to initialize GLFW")
-            raise VisualError
+            raise VisualError("Failed to initialize GLFW")
+
+        self.__key_state: set[Key] = set()
+        self.__mouse_state: set[MouseButton] = set()
 
         # Windows and key event handling
         self.__create_window(width, height, title)
         self.__set_callback()
-
-        self.__exit_key: set[int] = {
-            glfw.KEY_Q,
-            glfw.KEY_ESCAPE
-        }
-
-        self.__reporter.info("GLFW initialized successfully")
 
     def __create_window(
         self,
@@ -43,17 +37,13 @@ class Platform:
         )
 
         if self.__window is None:
-            self.__reporter.error("Failed to create window")
             self.__terminate()
-            raise VisualError
-
-        self.__reporter.info("Windows created")
+            raise VisualError("Failed to create window")
 
     def __terminate(self) -> None:
         if self.__window is not None:
             glfw.destroy_window(self.__window)
         glfw.terminate()
-        self.__reporter.info("GLFW terminated")
 
     def __set_callback(self) -> None:
         glfw.set_key_callback(self.__window, self.__on_key)
@@ -67,9 +57,15 @@ class Platform:
         action: int,
         mods: int
     ) -> None:
-        if key in self.__exit_key and action == glfw.PRESS:
-            self.__reporter.info("Quitting: Going down now")
-            glfw.set_window_should_close(window, True)
+        try:
+            v_key: Key = Key(key)
+        except ValueError:
+            return
+
+        if action == glfw.PRESS:
+            self.__key_state.add(v_key)
+        elif action == glfw.RELEASE:
+            self.__key_state.discard(v_key)
 
     def __on_mouse(
         self,
@@ -78,14 +74,27 @@ class Platform:
         action: int,
         mods: int
     ) -> None:
-        if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
-            self.__reporter.info("Left Button pressed")
+        try:
+            v_button: MouseButton = MouseButton(button)
+        except ValueError:
+            return
 
-    def pool_events(self) -> None:
+        if action == glfw.PRESS:
+            self.__mouse_state.add(v_button)
+        elif action == glfw.RELEASE:
+            self.__mouse_state.discard(v_button)
+
+    def poll_events(self) -> None:
         glfw.poll_events()
 
     def should_close(self) -> bool:
         return bool(glfw.window_should_close(self.__window))
 
-    def get_window(self) -> Any:
-        return self.__window
+    def close_window(self) -> None:
+        glfw.set_window_should_close(self.__window, True)
+
+    def is_key_pressed(self, key: Key) -> bool:
+        return key in self.__key_state
+
+    def is_mouse_button_pressed(self, button: MouseButton) -> bool:
+        return button in self.__mouse_state
