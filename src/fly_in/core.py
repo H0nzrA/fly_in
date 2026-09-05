@@ -6,7 +6,6 @@ from .graph import Graph, State
 from .solver import PrioritizedCooperative
 from .logger import Output, Benchmark
 from .utils import Syntax, FlyInError
-from collections.abc import Callable
 from argparse import Namespace
 from .visual import VisualApp
 
@@ -43,21 +42,7 @@ class Program:
             arguments.output
         )
 
-        self.__compute_solver: Callable[
-            [int],
-            dict[int, list[State]]
-        ] = self.__benchmark.mark_memory("Solver")(
-            self.__solver.compute
-        )
-
         self.__visual: VisualApp = VisualApp(title="Fly-In")
-        self.__visual_run: Callable[
-            [dict[int, list[State]]],
-            None
-        ] = self.__benchmark.mark_memory("Visual")(
-            self.__visual.run
-        )
-
         self.__reporter.info("Setup Done.")
 
     def introduction(self) -> None:
@@ -79,11 +64,17 @@ class Program:
     def run(self) -> None:
         try:
             self.setup()
-            paths: dict[int, list[State]] = self.__compute_solver(
+            paths: dict[int, list[State]] = self.__benchmark.run(
+                "Solver",
+                self.__solver.compute,
                 self.__map.nb_drones
             )
             self.__output.make_output(paths)
-            self.__visual_run(paths)
+            self.__benchmark.run(
+                "Visual",
+                self.__visual.run,
+                paths
+            )
             self.__benchmark.output_benchmark()
 
         except FlyInError as e:

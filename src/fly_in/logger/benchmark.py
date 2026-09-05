@@ -1,6 +1,5 @@
 from pathlib import Path
 from typing import Callable, Any
-from functools import wraps
 import tracemalloc
 from dataclasses import dataclass
 import time
@@ -9,7 +8,7 @@ from ..domain import Map
 
 
 @dataclass
-class MemoryState:
+class BenchmarkState:
     current: float
     peak: float
     execution: float
@@ -23,7 +22,7 @@ class Benchmark:
         map_file: str | Path
     ) -> None:
         self.__path: Path = Path(path)
-        self.__saved: dict[str, MemoryState] = {}
+        self.__saved: dict[str, BenchmarkState] = {}
         self.__map_info: str = self.__extract_map_mark(_map, map_file)
 
     def __extract_map_mark(self, _map: Map, map_file: str | Path) -> str:
@@ -41,32 +40,28 @@ class Benchmark:
 
         return res
 
-    def mark_memory(self, name: str) -> Callable[..., Any]:
-        def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
-            @wraps(func)
-            def wrapper(*args: Any, **kwargs: Any) -> Any:
-                tracemalloc.start()
+    def run(
+        self,
+        name: str,
+        func: Callable[..., Any],
+        *args: Any,
+        **kwargs: Any
+    ) -> Any:
+        tracemalloc.start()
+        start: float = time.perf_counter()
 
-                start: float = time.perf_counter()
-                res: Any = func(*args, **kwargs)
-                end: float = time.perf_counter()
-
-                current, peak = tracemalloc.get_traced_memory()
-                tracemalloc.stop()
-
-                mem_state: MemoryState = MemoryState(
-                    current=(current / 1024 / 1024),
-                    peak=(peak / 1024 / 1024),
-                    execution=(end - start)
-                )
-
-                self.__saved[name] = mem_state
-
-                return res
-
-            return wrapper
-
-        return decorator
+        try:
+            return func(*args, **kwargs)
+        finally:
+            end: float = time.perf_counter()
+            current, peak = tracemalloc.get_traced_memory()
+            tracemalloc.stop()
+            state: BenchmarkState = BenchmarkState(
+                current=(current / 1024 / 1024),
+                peak=(peak / 1024 / 1024),
+                execution=(end - start)
+            )
+            self.__saved[name] = state
 
     def output_benchmark(self) -> None:
 
@@ -84,7 +79,7 @@ class Benchmark:
     def __format_output(
         self,
         title: str,
-        state: MemoryState
+        state: BenchmarkState
     ) -> str:
 
         res: str = f"\n--- {title} ---\n"

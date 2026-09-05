@@ -1,4 +1,5 @@
 from ..utils import Syntax
+from datetime import datetime
 
 
 def loading(count: int, total: int) -> None:
@@ -38,10 +39,14 @@ class Reporter:
         self.merror: str = Syntax.BOLD + Syntax.RED + "[ERROR]" + Syntax.RESET
 
     def info(self, msg: str) -> None:
-        print(f"--- {self.source} - {self.minfo} {msg}")
+        print(f"--- {self.__time()}{self.source} - {self.minfo} {msg}")
 
     def warning(self, msg: str) -> None:
-        print(f"--- {self.source} - {self.mwarning} {msg}")
+        print(f"--- {self.__time()}{self.source} - {self.mwarning} {msg}")
 
     def error(self, msg: str) -> None:
-        print(f"--- {self.source} - {self.merror} {msg}")
+        print(f"--- {self.__time()}{self.source} - {self.merror} {msg}")
+
+    def __time(self) -> str:
+        current_time = datetime.now().time()
+        return f"{Syntax.DIM}[{current_time}]{Syntax.RESET}"
