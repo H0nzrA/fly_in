@@ -54,7 +54,7 @@ class Program:
         self.__visual_run: Callable[
             [dict[int, list[State]]],
             None
-        ] = self.__benchmark.mark_memory("Visual Platform")(
+        ] = self.__benchmark.mark_memory("Visual")(
             self.__visual.run
         )
 
