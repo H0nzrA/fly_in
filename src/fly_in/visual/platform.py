@@ -32,8 +32,8 @@ class Platform:
         screen_width: int = mode.size.width
         screen_height: int = mode.size.height
 
-        width = screen_width - screen_width // 6
-        height = screen_height - screen_height // 6
+        width = screen_width - screen_width // 7
+        height = screen_height - screen_height // 7
 
         self.__window: Any = glfw.create_window(
             width=width,
@@ -46,6 +46,10 @@ class Platform:
         if self.__window is None:
             self.__terminate()
             raise VisualError("Failed to create window")
+
+        w, h = glfw.get_window_size(self.__window)
+        if glfw.get_window_attrib(self.__window, glfw.MAXIMIZED):
+            glfw.restore_window(self.__window)
 
     def __terminate(self) -> None:
         if self.__window is not None:

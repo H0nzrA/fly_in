@@ -2,6 +2,9 @@ from OpenGL import GL
 from ..utils import VisualError
 
 
+Color = tuple[float, float, float, float]
+
+
 class Renderer:
     def __init__(self) -> None:
         version: bytes | None = GL.glGetString(GL.GL_VERSION)
@@ -9,7 +12,13 @@ class Renderer:
         if version is None:
             raise VisualError("OpenGL has no context to work with")
 
-        GL.glClearColor(0.5, 0.8, 0.9, 1.0)
+        self.__bg: Color = (
+            15 / 255,
+            17 / 255,
+            23 / 255,
+            1.0,
+        )
+        GL.glClearColor(*self.__bg)
 
     def render(self) -> None:
         GL.glClear(GL.GL_COLOR_BUFFER_BIT)
