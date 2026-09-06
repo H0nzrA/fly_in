@@ -112,3 +112,7 @@ class Platform:
 
     def is_mouse_button_pressed(self, button: MouseButton) -> bool:
         return button in self.__mouse_state
+
+    @property
+    def size(self) -> tuple[int, int]:
+        return glfw.get_window_size(self.__window)

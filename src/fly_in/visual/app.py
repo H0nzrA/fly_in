@@ -4,6 +4,7 @@ from .input import Key, MouseButton
 from ..cli import Reporter
 from ..utils import VisualError, FlyInError
 from .renderer import Renderer
+from .projection import Orthographic
 
 
 class VisualApp:
@@ -18,12 +19,18 @@ class VisualApp:
         # Platform initialization
         try:
             self.__platform: Platform = Platform(self.__title)
+            projection = Orthographic(
+                left=-60,
+                right=60,
+                bottom=-60,
+                top=60
+            )
         except VisualError as e:
             self.__reporter.error(str(e))
             raise FlyInError
 
         # Renderer initialization
-        self.__renderer: Renderer = Renderer()
+        self.__renderer: Renderer = Renderer(projection)
 
         self.__reporter.info("Successfully initialize")
 
