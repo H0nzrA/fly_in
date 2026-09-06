@@ -21,3 +21,6 @@ tmp/
 # Logger files
 logs/
 *.log
+
+# Development Makefile
+Makefile.dev
