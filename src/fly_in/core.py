@@ -7,7 +7,6 @@ from .solver import PrioritizedCooperative
 from .logger import Output, Benchmark
 from .utils import Syntax, FlyInError
 from argparse import Namespace
-from .visual import VisualApp
 
 
 class Program:
@@ -42,7 +41,6 @@ class Program:
             arguments.output
         )
 
-        self.__visual: VisualApp = VisualApp(title="Fly-In")
         self.__reporter.info("Setup Done.")
 
     def introduction(self) -> None:
@@ -70,11 +68,6 @@ class Program:
                 self.__map.nb_drones
             )
             self.__output.make_output(paths)
-            self.__benchmark.run(
-                "Visual",
-                self.__visual.run,
-                paths
-            )
             self.__benchmark.output_benchmark()
 
         except FlyInError as e:
