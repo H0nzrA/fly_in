@@ -3,16 +3,21 @@ from ..cli import Reporter
 from .platform import Platform
 from .input import KeyInput
 from .renderer import Renderer
+from ..domain import Map
 
 
 class VisualApp:
-    def __init__(self) -> None:
+    def __init__(self, domain: Map) -> None:
         self.__reporter: Reporter = Reporter("Visual")
+        self.__domain: Map = domain
 
     def __setup(self) -> None:
         try:
             self.__platform: Platform = Platform()
-            self.__renderer: Renderer = Renderer(self.__platform.get_windows())
+            self.__renderer: Renderer = Renderer(
+                self.__platform.get_windows(),
+                self.__domain
+            )
             self.__reporter.info("Successfully initialize visual application")
 
         except VisualError as e:

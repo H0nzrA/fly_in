@@ -42,7 +42,7 @@ class Program:
             arguments.output
         )
 
-        self.__visual: VisualApp = VisualApp()
+        self.__visual: VisualApp = VisualApp(self.__map)
 
         self.__reporter.info("Setup Done.")
 
