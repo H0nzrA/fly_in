@@ -14,7 +14,7 @@ class MapSelector:
     def __select_map(self) -> Path:
         map_root = (
             files("fly_in")
-            .joinpath("resources", "mandatory")
+            .joinpath("resources", "maps", "mandatory")
         )
         difficulties = [
             d for d in map_root.iterdir()
