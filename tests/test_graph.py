@@ -3,7 +3,7 @@ from pathlib import Path
 
 
 def test_graph() -> None:
-    path: str = "src/fly_in/resources/mandatory/hard/03_ultimate_challenge.txt"
+    path: str = "src/fly_in/resources/maps/mandatory/hard/03_ultimate_challenge.txt"
     parser: Parser = Parser(path=Path(path))
     map: Map = parser.get_map()
     graph: Graph = Graph(map=map)

@@ -1,7 +1,7 @@
 from fly_in import MapSelector, Parser, Map, Zone, ZoneMetadata, Connection
 
 def test_shared_memory() -> None:
-    path = "src/fly_in/resources/mandatory/easy/03_basic_capacity.txt"
+    path = "src/fly_in/resources/maps/mandatory/easy/03_basic_capacity.txt"
     parser = Parser(path=path)
 
     fmap: Map = parser.get_map()
