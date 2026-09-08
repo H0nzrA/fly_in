@@ -1,7 +1,7 @@
 import pygame
 from .var import Window, Surface, Color
 from importlib.resources import files, as_file
-from ..domain import Map, Zone
+from ..domain import Map, Zone, Connection
 
 
 class Renderer:
@@ -52,7 +52,7 @@ class Renderer:
         except KeyError:
             return self.__colors["lightgray"]
 
-    def __render_zones(self, zone: Zone) -> None:
+    def __draw_zones(self, zone: Zone) -> None:
         pos: tuple[int, int] = self.__positions(zone.coordinate)
         color: Color = self.__get_color(zone.metadata.color)
 
@@ -63,12 +63,28 @@ class Renderer:
             10
         )
 
+    def __draw_connection(self, conn: Connection) -> None:
+        start_pos: tuple[int, int] = self.__positions(conn.zone_a.coordinate)
+        end_pos: tuple[int, int] = self.__positions(conn.zone_b.coordinate)
+
+        pygame.draw.line(
+            self.__window,
+            "red",
+            start_pos,
+            end_pos,
+            width=2
+        )
+
     def __draw(self) -> None:
         # Zones
-        self.__render_zones(self.__domain.start_hub)
-        self.__render_zones(self.__domain.end_hub)
+        self.__draw_zones(self.__domain.start_hub)
+        self.__draw_zones(self.__domain.end_hub)
         for zone in self.__domain.hubs:
-            self.__render_zones(zone)
+            self.__draw_zones(zone)
+
+        # Connection
+        for conn in self.__domain.connections:
+            self.__draw_connection(conn)
 
     def render(self) -> None:
         self.__window.blit(self.__background, (0, 0))
