@@ -76,10 +76,8 @@ class Program:
                 "Visual",
                 self.__visual.run
             )
+            self.__benchmark.output_benchmark()
 
         except FlyInError as e:
             self.__reporter.error(str(e))
             return
-
-        finally:
-            self.__benchmark.output_benchmark()
