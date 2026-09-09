@@ -4,6 +4,28 @@ from importlib.resources import files, as_file
 from ..domain import Map, Zone, Connection
 
 
+def map_center(domain: Map) -> tuple[int, int]:
+    coord: list[tuple[int, int]] = [
+        zone.coordinate
+        for zone in domain.hubs
+    ]
+    coord.append(domain.start_hub.coordinate)
+    coord.append(domain.end_hub.coordinate)
+
+    x_max = max(x for x, y in coord)
+    x_min = min(x for x, y in coord)
+    y_max = max(y for x, y in coord)
+    y_min = min(y for x, y in coord)
+
+
+    res: tuple[int, int] = (
+        (x_max + x_min) // 2,
+        (y_max + y_min) // 2
+    )
+
+    return res
+
+
 class Renderer:
     def __init__(
         self,
@@ -16,11 +38,7 @@ class Renderer:
 
         # Domain to window scale
         self.__scale: int = 50
-        width, height = self.__window.get_size()
-        self.__offset: tuple[int, int] = (
-            width // 2,
-            height // 2
-        )
+        self.__map_center: tuple[int, int] = map_center(domain)
 
         # Color data
         self.__colors: dict[str, Color] = pygame.color.THECOLORS
@@ -39,8 +57,10 @@ class Renderer:
             )
 
     def __positions(self, pos: tuple[int, int]) -> tuple[int, int]:
-        x: int = self.__offset[0] + pos[0] * self.__scale
-        y: int = self.__offset[1] - pos[1] * self.__scale
+        width, height = self.__window.get_size()
+
+        x: int = width // 2 + (pos[0] - self.__map_center[0]) * self.__scale
+        y: int = height // 2 - (pos[1] - self.__map_center[1]) * self.__scale
 
         return x, y
 
