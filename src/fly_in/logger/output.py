@@ -61,11 +61,8 @@ class Output:
 
                     for time in range(current_time + 1, next_time):
                         turns[time].append(on_connection)
-                        if time + 1 == next_time:
-                            turns[time + 1].append(on_zone)
 
-                else:
-                    turns[next_time].append(on_zone)
+                turns[next_time].append(on_zone)
 
         if len(turns) != total_turn:
             raise ValueError(

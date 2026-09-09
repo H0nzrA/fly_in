@@ -42,7 +42,7 @@ class Program:
             arguments.output
         )
 
-        self.__visual: VisualApp = VisualApp(self.__map)
+        self.__visual: VisualApp = VisualApp()
 
         self.__reporter.info("Setup Done.")
 
@@ -74,7 +74,10 @@ class Program:
 
             self.__benchmark.run(
                 "Visual",
-                self.__visual.run
+                self.__visual.run,
+                self.__map,
+                self.__graph,
+                paths
             )
             self.__benchmark.output_benchmark()
 
