@@ -6,7 +6,7 @@
 #    By: trakotoz <trakotoz@student.42antananarivo  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/08/05 03:18:43 by trakotoz          #+#    #+#              #
-#    Updated: 2026/08/31 21:07:11 by trakotoz         ###   ########.fr        #
+#    Updated: 2026/09/09 19:02:40 by trakotoz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,7 +40,8 @@ C_MAGENTA	:= \033[35m
 	lint lint-strict \
 	clean fclean \
 	add remove \
-	re tree help
+	re tree \
+	help build
 
 
 help		:

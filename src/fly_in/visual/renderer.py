@@ -17,7 +17,6 @@ def map_center(domain: Map) -> tuple[int, int]:
     y_max = max(y for x, y in coord)
     y_min = min(y for x, y in coord)
 
-
     res: tuple[int, int] = (
         (x_max + x_min) // 2,
         (y_max + y_min) // 2
