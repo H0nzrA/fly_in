@@ -54,9 +54,9 @@ class Graph(BaseModel):
         for conn in self.__adjacency_list[id]:
 
             if id == conn.zone_a.id:
-                ngb[conn.zone_b.id] = self.__zone_weight(id)
+                ngb[conn.zone_b.id] = self.__zone_weight(conn.zone_b.id)
             else:
-                ngb[conn.zone_a.id] = self.__zone_weight(conn.zone_b.id)
+                ngb[conn.zone_a.id] = self.__zone_weight(conn.zone_a.id)
 
         return ngb
 
