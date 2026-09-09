@@ -19,14 +19,15 @@ class VisualApp:
         paths: dict[int, list[State]]
     ) -> None:
         try:
-            self.__platform: Platform = Platform()
-            self.__renderer: Renderer = Renderer(
-                self.__platform.get_windows(),
-                domain
-            )
             self.__visual_data: VisualData = VisualData(
                 paths,
                 graph
+            )
+            self.__platform: Platform = Platform()
+            self.__renderer: Renderer = Renderer(
+                self.__platform.get_windows(),
+                domain,
+                self.__visual_data
             )
             self.__reporter.info("Successfully initialize visual application")
 
@@ -38,6 +39,11 @@ class VisualApp:
         keys: set[KeyInput] = self.__platform.get_keys()
         if KeyInput.Q in keys or KeyInput.ESC in keys:
             self.__platform.terminate()
+
+        if KeyInput.RIGHT in keys:
+            self.__visual_data.next()
+        elif KeyInput.LEFT in keys:
+            self.__visual_data.previous()
 
         self.__platform.tick(60)
 

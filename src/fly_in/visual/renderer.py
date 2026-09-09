@@ -1,4 +1,6 @@
 import pygame
+
+from .visual_data import VisualData
 from .var import Window, Surface, Color
 from importlib.resources import files, as_file
 from ..domain import Map, Zone, Connection
@@ -29,7 +31,8 @@ class Renderer:
     def __init__(
         self,
         window: Window,
-        domain: Map
+        domain: Map,
+        visual_data: VisualData
     ) -> None:
         self.__window: Window = window
         self.__load_image()
@@ -41,6 +44,8 @@ class Renderer:
 
         # Color data
         self.__colors: dict[str, Color] = pygame.color.THECOLORS
+
+        self.__visual_data: VisualData = visual_data
 
     def __load_image(self) -> None:
         bg = (
@@ -94,7 +99,17 @@ class Renderer:
             width=2
         )
 
-    def __draw(self) -> None:
+    def __draw_drone(self, position: tuple[int, int]) -> None:
+        pos: tuple[int, int] = self.__positions(position)
+
+        pygame.draw.circle(
+            self.__window,
+            "purple",
+            pos,
+            5
+        )
+
+    def __draw_static(self) -> None:
         # Zones
         self.__draw_zones(self.__domain.start_hub)
         self.__draw_zones(self.__domain.end_hub)
@@ -104,6 +119,15 @@ class Renderer:
         # Connection
         for conn in self.__domain.connections:
             self.__draw_connection(conn)
+
+    def __draw_dynamic(self) -> None:
+        for drone, movement in self.__visual_data.get_current().items():
+            position = self.__visual_data.get_movement_position(movement)
+            self.__draw_drone(position)
+
+    def __draw(self) -> None:
+        self.__draw_static()
+        self.__draw_dynamic()
 
     def render(self) -> None:
         self.__window.blit(self.__background, (0, 0))
