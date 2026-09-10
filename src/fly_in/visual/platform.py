@@ -13,7 +13,9 @@ class Platform:
         self.__window: Window = self.__create_window()
         self.__clock: Clock = Clock()
         self.__running: bool = True
+
         self.__key: set[KeyInput] = set()
+        self.__pressed: set[KeyInput] = set()
 
     def __create_window(self) -> Window:
         screen_width, screen_height = pygame.display.get_desktop_sizes()[0]
@@ -32,10 +34,12 @@ class Platform:
 
         if event.type == pygame.KEYDOWN:
             self.__key.add(key)
+            self.__pressed.add(key)
         elif event.type == pygame.KEYUP:
             self.__key.discard(key)
 
     def poll_events(self) -> None:
+        self.__pressed.clear()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.__running = False
@@ -44,6 +48,9 @@ class Platform:
 
     def get_keys(self) -> set[KeyInput]:
         return self.__key.copy()
+
+    def get_pressed(self) -> set[KeyInput]:
+        return self.__pressed.copy()
 
     def terminate(self) -> None:
         self.__running = False

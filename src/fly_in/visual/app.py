@@ -24,8 +24,8 @@ class VisualApp:
                 graph
             )
 
-            self.__progress: float = 0.0
-            self.__duration: float = 0.3
+            self.__progress: float = 1.0
+            self.__duration: float = 0.6
 
             self.__platform: Platform = Platform()
             self.__renderer: Renderer = Renderer(
@@ -41,20 +41,26 @@ class VisualApp:
 
     def __update(self) -> None:
         keys: set[KeyInput] = self.__platform.get_keys()
+        pressed: set[KeyInput] = self.__platform.get_pressed()
+
+        dt = self.__platform.tick() / 1000
+
         if KeyInput.Q in keys or KeyInput.ESC in keys:
             self.__platform.terminate()
 
-        if self.__progress > 1:
-            if KeyInput.RIGHT in keys:
-                self.__visual_data.next()
-                self.__progress = 0
-            elif KeyInput.LEFT in keys:
-                self.__visual_data.previous()
-                self.__progress = 0
-
-        else:
-            dt = self.__platform.tick() / 1000
+        if self.__progress < 1.0:
             self.__progress += dt / self.__duration
+
+            if self.__progress >= 1.0:
+                self.__progress = 1.0
+            return
+
+        if KeyInput.RIGHT in pressed:
+            self.__visual_data.next()
+            self.__progress = 0
+        elif KeyInput.LEFT in pressed:
+            self.__visual_data.previous()
+            self.__progress = 0
 
     def run(
         self,
