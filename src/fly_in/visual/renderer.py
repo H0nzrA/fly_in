@@ -128,15 +128,15 @@ class Renderer:
         )
 
     def __draw_static(self) -> None:
+        # Connection
+        for conn in self.__domain.connections:
+            self.__draw_connection(conn)
+
         # Zones
         self.__draw_zones(self.__domain.start_hub)
         self.__draw_zones(self.__domain.end_hub)
         for zone in self.__domain.hubs:
             self.__draw_zones(zone)
-
-        # Connection
-        for conn in self.__domain.connections:
-            self.__draw_connection(conn)
 
     def __draw_dynamic(self, progress: float) -> None:
         current_time: int = self.__visual_data.current_time
