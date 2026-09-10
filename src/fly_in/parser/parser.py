@@ -74,6 +74,8 @@ class Parser(BaseModel):
 
             try:
                 key, value = line.split(":", 1)
+                key = key.strip()
+                value = value.strip()
 
                 if first_line and key != Key.NDRONES.value:
                     raise ValueError(
