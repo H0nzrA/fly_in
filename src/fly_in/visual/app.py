@@ -23,6 +23,10 @@ class VisualApp:
                 paths,
                 graph
             )
+
+            self.__progress: float = 0.0
+            self.__duration: float = 0.3
+
             self.__platform: Platform = Platform()
             self.__renderer: Renderer = Renderer(
                 self.__platform.get_windows(),
@@ -40,12 +44,17 @@ class VisualApp:
         if KeyInput.Q in keys or KeyInput.ESC in keys:
             self.__platform.terminate()
 
-        if KeyInput.RIGHT in keys:
-            self.__visual_data.next()
-        elif KeyInput.LEFT in keys:
-            self.__visual_data.previous()
+        if self.__progress > 1:
+            if KeyInput.RIGHT in keys:
+                self.__visual_data.next()
+                self.__progress = 0
+            elif KeyInput.LEFT in keys:
+                self.__visual_data.previous()
+                self.__progress = 0
 
-        self.__platform.tick(60)
+        else:
+            dt = self.__platform.tick() / 1000
+            self.__progress += dt / self.__duration
 
     def run(
         self,
@@ -62,7 +71,7 @@ class VisualApp:
         while self.__platform.is_running():
             self.__platform.poll_events()
             self.__update()
-            self.__renderer.render()
+            self.__renderer.render(self.__progress)
 
         self.__platform.close()
         self.__reporter.info("Terminal visual loop")

@@ -54,8 +54,8 @@ class Platform:
     def is_running(self) -> bool:
         return self.__running
 
-    def tick(self, fps: int = 60) -> None:
-        self.__clock.tick(fps)
+    def tick(self, fps: int = 60) -> float:
+        return self.__clock.tick(fps)
 
     def get_windows(self) -> Window:
         if not self.__window:

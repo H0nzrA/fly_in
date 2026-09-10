@@ -1,6 +1,7 @@
 from ..graph import Graph, State
 from ..domain import Zone
 from .var import Movement
+from ..utils import VisualError
 
 
 def get_max_time(paths: dict[int, list[State]]) -> int:
@@ -17,7 +18,7 @@ class VisualData:
         paths: dict[int, list[State]],
         graph: Graph
     ) -> None:
-        self.__max_time: int = get_max_time(paths)
+        self.__max_time: int = get_max_time(paths) + 1
         self.__timed_path: dict[
             int,
             dict[int, Movement]
@@ -25,7 +26,7 @@ class VisualData:
             paths,
             graph
         )
-        self.current_time: int = 0
+        self.__time: int = 0
 
     def __data_adapter(
         self,
@@ -64,19 +65,30 @@ class VisualData:
         return simulation
 
     def next(self) -> None:
-        t: int = self.current_time + 1
+        t: int = self.__time + 1
         if self.__max_time < t:
             return
-        self.current_time = t
+        self.__time = t
 
     def previous(self) -> None:
-        t: int = self.current_time - 1
+        t: int = self.__time - 1
         if t < 0:
             return
-        self.current_time = t
+        self.__time = t
 
     def get_current(self) -> dict[int, Movement]:
-        return self.__timed_path[self.current_time]
+        return self.__timed_path[self.__time]
+
+    def get_at(self, time: int) -> dict[int, Movement]:
+        if self.__time == 0:
+            return self.get_current()
+        if self.__time >= self.__max_time:
+            return self.__timed_path[self.__max_time]
+
+        if time not in self.__timed_path:
+            raise VisualError(f"No path/position found at time {time}")
+
+        return self.__timed_path[time]
 
     def get_movement_position(
         self,
@@ -92,3 +104,7 @@ class VisualData:
             (pos_a[0] + pos_b[0]) // 2,
             (pos_a[1] + pos_b[1]) // 2,
         )
+
+    @property
+    def current_time(self) -> int:
+        return self.__time

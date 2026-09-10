@@ -1,7 +1,7 @@
 import pygame
 
 from .visual_data import VisualData
-from .var import Window, Surface, Color
+from .var import Window, Surface, Color, Movement
 from importlib.resources import files, as_file
 from ..domain import Map, Zone, Connection
 
@@ -99,8 +99,26 @@ class Renderer:
             width=2
         )
 
-    def __draw_drone(self, position: tuple[int, int]) -> None:
-        pos: tuple[int, int] = self.__positions(position)
+    def __interpolate(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        progress: float
+    ) -> tuple[int, int]:
+        x: float = start[0] + (end[0] - start[0]) * progress
+        y: float = start[1] + (end[1] - start[1]) * progress
+
+        return (round(x), round(y))
+
+    def __draw_drone(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        progress: float
+    ) -> None:
+        start = self.__positions(start)
+        end = self.__positions(end)
+        pos: tuple[int, int] = self.__interpolate(start, end, progress)
 
         pygame.draw.circle(
             self.__window,
@@ -120,16 +138,30 @@ class Renderer:
         for conn in self.__domain.connections:
             self.__draw_connection(conn)
 
-    def __draw_dynamic(self) -> None:
-        for drone, movement in self.__visual_data.get_current().items():
-            position = self.__visual_data.get_movement_position(movement)
-            self.__draw_drone(position)
+    def __draw_dynamic(self, progress: float) -> None:
+        current_time: int = self.__visual_data.current_time
+        current: dict[int, Movement] = self.__visual_data.get_current()
 
-    def __draw(self) -> None:
+        if current_time == 0:
+            for drone, movement in current.items():
+                pos = self.__visual_data.get_movement_position(movement)
+                self.__draw_drone(pos, pos, 1)
+            return
+
+        previous: dict[int, Movement] = self.__visual_data.get_at(
+            current_time - 1
+        )
+        for drone, movement in current.items():
+            p_move: Movement = previous[drone]
+            start = self.__visual_data.get_movement_position(p_move)
+            end = self.__visual_data.get_movement_position(movement)
+            self.__draw_drone(start, end, progress)
+
+    def __draw(self, progress: float) -> None:
         self.__draw_static()
-        self.__draw_dynamic()
+        self.__draw_dynamic(progress)
 
-    def render(self) -> None:
+    def render(self, progress: float) -> None:
         self.__window.blit(self.__background, (0, 0))
-        self.__draw()
+        self.__draw(progress)
         pygame.display.flip()
