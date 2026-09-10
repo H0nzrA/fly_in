@@ -6,8 +6,8 @@ from importlib.resources import files, as_file
 from ..domain import Map, Zone, Connection
 
 
-def map_center(domain: Map) -> tuple[int, int]:
-    coord: list[tuple[int, int]] = [
+def map_center(domain: Map) -> tuple[float, float]:
+    coord: list[tuple[float, float]] = [
         zone.coordinate
         for zone in domain.hubs
     ]
@@ -19,7 +19,7 @@ def map_center(domain: Map) -> tuple[int, int]:
     y_max = max(y for x, y in coord)
     y_min = min(y for x, y in coord)
 
-    res: tuple[int, int] = (
+    res: tuple[float, float] = (
         (x_max + x_min) // 2,
         (y_max + y_min) // 2
     )
@@ -40,7 +40,7 @@ class Renderer:
 
         # Domain to window scale
         self.__scale: int = 50
-        self.__map_center: tuple[int, int] = map_center(domain)
+        self.__map_center: tuple[float, float] = map_center(domain)
 
         # Color data
         self.__colors: dict[str, Color] = pygame.color.THECOLORS
@@ -60,11 +60,11 @@ class Renderer:
                 w_size
             )
 
-    def __positions(self, pos: tuple[int, int]) -> tuple[int, int]:
+    def __positions(self, pos: tuple[float, float]) -> tuple[float, float]:
         width, height = self.__window.get_size()
 
-        x: int = width // 2 + (pos[0] - self.__map_center[0]) * self.__scale
-        y: int = height // 2 - (pos[1] - self.__map_center[1]) * self.__scale
+        x: float = width / 2 + (pos[0] - self.__map_center[0]) * self.__scale
+        y: float = height / 2 - (pos[1] - self.__map_center[1]) * self.__scale
 
         return x, y
 
@@ -77,7 +77,7 @@ class Renderer:
             return self.__colors["lightgray"]
 
     def __draw_zones(self, zone: Zone) -> None:
-        pos: tuple[int, int] = self.__positions(zone.coordinate)
+        pos: tuple[float, float] = self.__positions(zone.coordinate)
         color: Color = self.__get_color(zone.metadata.color)
 
         pygame.draw.circle(
@@ -88,8 +88,8 @@ class Renderer:
         )
 
     def __draw_connection(self, conn: Connection) -> None:
-        start_pos: tuple[int, int] = self.__positions(conn.zone_a.coordinate)
-        end_pos: tuple[int, int] = self.__positions(conn.zone_b.coordinate)
+        start_pos = self.__positions(conn.zone_a.coordinate)
+        end_pos = self.__positions(conn.zone_b.coordinate)
 
         pygame.draw.line(
             self.__window,
@@ -101,10 +101,10 @@ class Renderer:
 
     def __interpolate(
         self,
-        start: tuple[int, int],
-        end: tuple[int, int],
+        start: tuple[float, float],
+        end: tuple[float, float],
         progress: float
-    ) -> tuple[int, int]:
+    ) -> tuple[float, float]:
         x: float = start[0] + (end[0] - start[0]) * progress
         y: float = start[1] + (end[1] - start[1]) * progress
 
@@ -112,13 +112,13 @@ class Renderer:
 
     def __draw_drone(
         self,
-        start: tuple[int, int],
-        end: tuple[int, int],
+        start: tuple[float, float],
+        end: tuple[float, float],
         progress: float
     ) -> None:
         start = self.__positions(start)
         end = self.__positions(end)
-        pos: tuple[int, int] = self.__interpolate(start, end, progress)
+        pos: tuple[float, float] = self.__interpolate(start, end, progress)
 
         pygame.draw.circle(
             self.__window,
@@ -145,7 +145,7 @@ class Renderer:
         if current_time == 0:
             for drone, movement in current.items():
                 pos = self.__visual_data.get_movement_position(movement)
-                self.__draw_drone(pos, pos, 1)
+                self.__draw_drone(pos, pos, progress)
             return
 
         previous: dict[int, Movement] = self.__visual_data.get_at(

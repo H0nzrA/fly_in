@@ -93,16 +93,17 @@ class VisualData:
     def get_movement_position(
         self,
         movement: Movement
-    ) -> tuple[int, int]:
+    ) -> tuple[float, float]:
         if isinstance(movement, Zone):
-            return movement.coordinate
+            coordinate = movement.coordinate
+            return float(coordinate[0]), float(coordinate[1])
 
         pos_a: tuple[int, int] = movement.zone_a.coordinate
         pos_b: tuple[int, int] = movement.zone_b.coordinate
 
         return (
-            (pos_a[0] + pos_b[0]) // 2,
-            (pos_a[1] + pos_b[1]) // 2,
+            (pos_a[0] + pos_b[0]) / 2,
+            (pos_a[1] + pos_b[1]) / 2,
         )
 
     @property
