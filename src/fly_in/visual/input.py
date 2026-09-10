@@ -4,6 +4,7 @@ from enum import Enum
 
 class KeyInput(Enum):
     Q = pygame.K_q
+    A = pygame.K_a
     ESC = pygame.K_ESCAPE
     RIGHT = pygame.K_RIGHT
     LEFT = pygame.K_LEFT
