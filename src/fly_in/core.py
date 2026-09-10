@@ -71,6 +71,7 @@ class Program:
                 self.__map.nb_drones
             )
             self.__output.make_output(paths)
+            self.__reporter.info("Output file written!")
 
             self.__benchmark.run(
                 "Visual",
