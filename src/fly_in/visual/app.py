@@ -6,6 +6,7 @@ from .renderer import Renderer
 from ..domain import Map
 from ..graph import Graph, State
 from .visual_data import VisualData
+from .camera import Camera
 
 
 class VisualApp:
@@ -29,9 +30,11 @@ class VisualApp:
             self.__playing: bool = False
 
             self.__platform: Platform = Platform()
+            self.__camera: Camera = Camera(domain)
             self.__renderer: Renderer = Renderer(
                 self.__platform.get_windows(),
                 domain,
+                self.__camera,
                 self.__visual_data
             )
             self.__reporter.info("Successfully initialize visual application")
@@ -48,6 +51,16 @@ class VisualApp:
 
         if KeyInput.Q in keys or KeyInput.ESC in keys:
             self.__platform.terminate()
+
+        # Camera view update
+        if KeyInput.LEFT in keys:
+            self.__camera.move(-dt, 0)
+        elif KeyInput.RIGHT in keys:
+            self.__camera.move(dt, 0)
+        elif KeyInput.UP in keys:
+            self.__camera.move(0, dt)
+        elif KeyInput.DOWN in keys:
+            self.__camera.move(0, -dt)
 
         if KeyInput.R in pressed:
             self.__visual_data.reset_time()
@@ -76,17 +89,6 @@ class VisualApp:
                 self.__progress = 0
 
             return
-
-        if KeyInput.A in pressed:
-            self.__playing = True
-            return
-
-        if KeyInput.RIGHT in pressed:
-            self.__visual_data.next()
-            self.__progress = 0
-        elif KeyInput.LEFT in pressed:
-            self.__visual_data.previous()
-            self.__progress = 0
 
     def run(
         self,

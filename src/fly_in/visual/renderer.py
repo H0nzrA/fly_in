@@ -4,27 +4,7 @@ from .visual_data import VisualData
 from .var import Font, Window, Surface, Color, Movement, Rect
 from importlib.resources import files, as_file
 from ..domain import Map, Zone, Connection
-
-
-def map_center(domain: Map) -> tuple[float, float]:
-    coord: list[tuple[float, float]] = [
-        zone.coordinate
-        for zone in domain.hubs
-    ]
-    coord.append(domain.start_hub.coordinate)
-    coord.append(domain.end_hub.coordinate)
-
-    x_max = max(x for x, y in coord)
-    x_min = min(x for x, y in coord)
-    y_max = max(y for x, y in coord)
-    y_min = min(y for x, y in coord)
-
-    res: tuple[float, float] = (
-        (x_max + x_min) // 2,
-        (y_max + y_min) // 2
-    )
-
-    return res
+from .camera import Camera
 
 
 class Renderer:
@@ -32,6 +12,7 @@ class Renderer:
         self,
         window: Window,
         domain: Map,
+        camera: Camera,
         visual_data: VisualData
     ) -> None:
         self.__window: Window = window
@@ -39,8 +20,8 @@ class Renderer:
         self.__domain: Map = domain
 
         # Domain to window scale
-        self.__scale: int = 50
-        self.__map_center: tuple[float, float] = map_center(domain)
+        self.__scale: int = 75
+        self.__camera: Camera = camera
 
         # Color data
         self.__colors: dict[str, Color] = pygame.color.THECOLORS
@@ -63,9 +44,10 @@ class Renderer:
 
     def __positions(self, pos: tuple[float, float]) -> tuple[float, float]:
         width, height = self.__window.get_size()
+        cam_x, cam_y = self.__camera.get_position()
 
-        x: float = width / 2 + (pos[0] - self.__map_center[0]) * self.__scale
-        y: float = height / 2 - (pos[1] - self.__map_center[1]) * self.__scale
+        x: float = width / 2 + (pos[0] - cam_x) * self.__scale
+        y: float = height / 2 - (pos[1] - cam_y) * self.__scale
 
         return x, y
 
