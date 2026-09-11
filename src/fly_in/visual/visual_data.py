@@ -113,3 +113,6 @@ class VisualData:
     @property
     def last_time(self) -> int:
         return self.__max_time
+
+    def reset_time(self) -> None:
+        self.__time = 0

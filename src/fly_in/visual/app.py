@@ -49,6 +49,10 @@ class VisualApp:
         if KeyInput.Q in keys or KeyInput.ESC in keys:
             self.__platform.terminate()
 
+        if KeyInput.R in pressed:
+            self.__visual_data.reset_time()
+            self.__playing = False
+
         if KeyInput.SPACE in pressed:
             self.__playing = not self.__playing
 
