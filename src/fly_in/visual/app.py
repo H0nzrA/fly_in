@@ -49,11 +49,17 @@ class VisualApp:
         if KeyInput.Q in keys or KeyInput.ESC in keys:
             self.__platform.terminate()
 
+        if KeyInput.SPACE in pressed:
+            self.__playing = not self.__playing
+
         if self.__progress < 1.0:
-            self.__progress += dt / self.__duration
+
+            if self.__playing:
+                self.__progress += dt / self.__duration
 
             if self.__progress >= 1.0:
                 self.__progress = 1.0
+
             return
 
         if self.__playing:

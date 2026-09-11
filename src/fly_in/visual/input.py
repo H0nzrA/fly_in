@@ -8,6 +8,7 @@ class KeyInput(Enum):
     ESC = pygame.K_ESCAPE
     RIGHT = pygame.K_RIGHT
     LEFT = pygame.K_LEFT
+    SPACE = pygame.K_SPACE
 
     @classmethod
     def to_input(cls, key: int) -> "KeyInput | None":
