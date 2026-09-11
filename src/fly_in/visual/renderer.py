@@ -1,4 +1,5 @@
 import pygame
+import time  # Imported to track animation timing independently of frames
 
 from .visual_data import VisualData
 from .var import Font, Window, Surface, Color, Movement, Rect
@@ -16,7 +17,6 @@ class Renderer:
         visual_data: VisualData
     ) -> None:
         self.__window: Window = window
-        self.__load_image()
         self.__domain: Map = domain
 
         # Domain to window scale
@@ -26,7 +26,16 @@ class Renderer:
         self.__visual_data: VisualData = visual_data
         self.__font: Font = Font(None, 12)
 
+        # Animation Setup
+        self.__drone_frames: list[Surface] = []
+        self.__animation_speed: float = 8.0  # Speed in frames per second
+        self.__start_time: float = time.time()
+
+        # Load images last so internal variables are defined
+        self.__load_image()
+
     def __load_image(self) -> None:
+        # Background loading
         bg = (
             files("fly_in")
             .joinpath("resources", "images", "background.jpg")
@@ -38,6 +47,35 @@ class Renderer:
                 self.__background,
                 w_size
             )
+
+        # Drone Sprite Sheet loading and slicing
+        drone_sheet_path = (
+            files("fly_in")
+            .joinpath("resources", "images", "drone.png")
+        )
+        with as_file(drone_sheet_path) as path:
+            sprite_sheet: Surface = pygame.image.load(path).convert_alpha()
+
+            sheet_width, sheet_height = sprite_sheet.get_size()
+            num_frames = 4
+            frame_width = sheet_width // num_frames
+            frame_height = sheet_height
+
+            target_drone_size = (48, 48)
+
+            for i in range(num_frames):
+                rect = pygame.Rect(
+                    i * frame_width,
+                    0,
+                    frame_width, frame_height
+                )
+                frame_surface = sprite_sheet.subsurface(rect)
+
+                scaled_frame = pygame.transform.scale(
+                    frame_surface,
+                    target_drone_size
+                )
+                self.__drone_frames.append(scaled_frame)
 
     def __positions(self, pos: tuple[float, float]) -> tuple[float, float]:
         width, height = self.__window.get_size()
@@ -59,7 +97,7 @@ class Renderer:
     def __draw_zones(self, zone: Zone) -> None:
         pos: tuple[float, float] = self.__positions(zone.coordinate)
         color: Color = self.__get_color(zone.metadata.color)
-        color.a = 180
+        color.a = 200
         radius = 15
         surface: Surface = pygame.Surface(
             (radius * 2, radius * 2),
@@ -72,10 +110,16 @@ class Renderer:
             (radius, radius),
             radius
         )
-
         self.__window.blit(
             surface,
             (pos[0] - radius, pos[1] - radius)
+        )
+
+        pygame.draw.circle(
+            self.__window,
+            "black",
+            pos,
+            radius / 2
         )
 
     def __draw_connection(self, conn: Connection) -> None:
@@ -112,12 +156,16 @@ class Renderer:
         end = self.__positions(end)
         pos: tuple[float, float] = self.__interpolate(start, end, progress)
 
-        pygame.draw.circle(
-            self.__window,
-            "purple",
-            pos,
-            5
+        elapsed_time = time.time() - self.__start_time
+        frame_index = (
+            int(elapsed_time * self.__animation_speed) %
+            len(self.__drone_frames)
         )
+        active_drone_sprite = self.__drone_frames[frame_index]
+
+        sprite_rect = active_drone_sprite.get_rect(center=pos)
+        self.__window.blit(active_drone_sprite, sprite_rect)
+
         if drone is not None:
             text: Surface = self.__font.render(
                 str(drone),
@@ -125,7 +173,6 @@ class Renderer:
                 "white"
             )
             text_rect: Rect = text.get_rect(center=pos)
-
             self.__window.blit(text, text_rect)
 
     def __draw_static(self) -> None:
@@ -134,6 +181,7 @@ class Renderer:
             self.__draw_connection(conn)
 
         # Zones
+        self.__domain.start_hub
         self.__draw_zones(self.__domain.start_hub)
         self.__draw_zones(self.__domain.end_hub)
         for zone in self.__domain.hubs:
