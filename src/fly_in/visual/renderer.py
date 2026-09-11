@@ -1,7 +1,7 @@
 import pygame
 
 from .visual_data import VisualData
-from .var import Window, Surface, Color, Movement
+from .var import Font, Window, Surface, Color, Movement, Rect
 from importlib.resources import files, as_file
 from ..domain import Map, Zone, Connection
 
@@ -46,6 +46,7 @@ class Renderer:
         self.__colors: dict[str, Color] = pygame.color.THECOLORS
 
         self.__visual_data: VisualData = visual_data
+        self.__font: Font = Font(None, 10)
 
     def __load_image(self) -> None:
         bg = (
@@ -114,7 +115,8 @@ class Renderer:
         self,
         start: tuple[float, float],
         end: tuple[float, float],
-        progress: float
+        progress: float,
+        drone: int | None = None
     ) -> None:
         start = self.__positions(start)
         end = self.__positions(end)
@@ -126,6 +128,15 @@ class Renderer:
             pos,
             5
         )
+        if drone is not None:
+            text: Surface = self.__font.render(
+                str(drone),
+                True,
+                "white"
+            )
+            text_rect: Rect = text.get_rect(center=pos)
+
+            self.__window.blit(text, text_rect)
 
     def __draw_static(self) -> None:
         # Connection
@@ -155,7 +166,7 @@ class Renderer:
             p_move: Movement = previous[drone]
             start = self.__visual_data.get_movement_position(p_move)
             end = self.__visual_data.get_movement_position(movement)
-            self.__draw_drone(start, end, progress)
+            self.__draw_drone(start, end, progress, drone)
 
     def __draw(self, progress: float) -> None:
         self.__draw_static()
