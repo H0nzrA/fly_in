@@ -1,10 +1,10 @@
 import pygame
-import time  # Imported to track animation timing independently of frames
+import time
 
 from .visual_data import VisualData
 from .var import Font, Window, Surface, Color, Movement, Rect
 from importlib.resources import files, as_file
-from ..domain import Map, Zone, Connection
+from ..domain import Map, Zone, Connection, ZoneType
 from .camera import Camera
 
 
@@ -28,10 +28,15 @@ class Renderer:
 
         # Animation Setup
         self.__drone_frames: list[Surface] = []
-        self.__animation_speed: float = 8.0  # Speed in frames per second
+        self.__animation_speed: float = 8.0
         self.__start_time: float = time.time()
+        self.__marker_colors = {
+            ZoneType.NORMAL: Color("white"),
+            ZoneType.PRIORITY: Color("cyan"),
+            ZoneType.RESTRICTED: Color("orange"),
+            ZoneType.BLOCKED: Color("dimgray"),
+        }
 
-        # Load images last so internal variables are defined
         self.__load_image()
 
     def __load_image(self) -> None:
@@ -61,7 +66,7 @@ class Renderer:
             frame_width = sheet_width // num_frames
             frame_height = sheet_height
 
-            target_drone_size = (48, 48)
+            target_drone_size = (38, 38)
 
             for i in range(num_frames):
                 rect = pygame.Rect(
@@ -97,8 +102,8 @@ class Renderer:
     def __draw_zones(self, zone: Zone) -> None:
         pos: tuple[float, float] = self.__positions(zone.coordinate)
         color: Color = self.__get_color(zone.metadata.color)
-        color.a = 200
-        radius = 15
+        color.a = 70
+        radius = 20
         surface: Surface = pygame.Surface(
             (radius * 2, radius * 2),
             pygame.SRCALPHA
@@ -115,11 +120,12 @@ class Renderer:
             (pos[0] - radius, pos[1] - radius)
         )
 
+        type_color: Color = self.__marker_colors[zone.metadata.zone]
         pygame.draw.circle(
             self.__window,
-            "black",
+            type_color,
             pos,
-            radius / 2
+            radius / 3
         )
 
     def __draw_connection(self, conn: Connection) -> None:
