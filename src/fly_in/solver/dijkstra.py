@@ -1,6 +1,5 @@
 from ..graph import Graph
 from math import inf
-from ..utils import SolverError
 
 
 class Dijkstra:

@@ -38,6 +38,11 @@ class Renderer:
         }
 
         self.__load_image()
+        self.__dark_overlay: Surface = pygame.Surface(
+            self.__window.get_size(),
+            pygame.SRCALPHA
+        )
+        self.__dark_overlay.fill((0, 0, 0, 180))
 
     def __load_image(self) -> None:
         # Background loading
@@ -218,5 +223,6 @@ class Renderer:
 
     def render(self, progress: float) -> None:
         self.__window.blit(self.__background, (0, 0))
+        self.__window.blit(self.__dark_overlay, (0, 0))
         self.__draw(progress)
         pygame.display.flip()
