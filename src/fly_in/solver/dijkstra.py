@@ -28,7 +28,7 @@ class Dijkstra:
             current = self.__remove_smallest_dist(unvisited, distances)
 
             if distances[current] == inf:
-                raise SolverError("Goal is Unreachable")
+                continue
 
             for neighbor, weight in graph.neighbors(current).items():
                 if neighbor in unvisited:
