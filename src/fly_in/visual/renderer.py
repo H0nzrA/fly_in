@@ -46,7 +46,7 @@ class Renderer:
         self.__colors: dict[str, Color] = pygame.color.THECOLORS
 
         self.__visual_data: VisualData = visual_data
-        self.__font: Font = Font(None, 10)
+        self.__font: Font = Font(None, 12)
 
     def __load_image(self) -> None:
         bg = (
@@ -153,12 +153,6 @@ class Renderer:
         current_time: int = self.__visual_data.current_time
         current: dict[int, Movement] = self.__visual_data.get_current()
 
-        if current_time == 0:
-            for drone, movement in current.items():
-                pos = self.__visual_data.get_movement_position(movement)
-                self.__draw_drone(pos, pos, progress)
-            return
-
         previous: dict[int, Movement] = self.__visual_data.get_at(
             current_time - 1
         )
@@ -166,7 +160,13 @@ class Renderer:
             p_move: Movement = previous[drone]
             start = self.__visual_data.get_movement_position(p_move)
             end = self.__visual_data.get_movement_position(movement)
-            self.__draw_drone(start, end, progress, drone)
+
+            if current_time == 0:
+                self.__draw_drone(start, start, progress)
+            elif current_time == self.__visual_data.last_time:
+                self.__draw_drone(start, end, progress)
+            else:
+                self.__draw_drone(start, end, progress, drone)
 
     def __draw(self, progress: float) -> None:
         self.__draw_static()

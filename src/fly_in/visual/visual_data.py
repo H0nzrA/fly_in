@@ -109,3 +109,7 @@ class VisualData:
     @property
     def current_time(self) -> int:
         return self.__time
+
+    @property
+    def last_time(self) -> int:
+        return self.__max_time
