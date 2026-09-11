@@ -23,9 +23,6 @@ class Renderer:
         self.__scale: int = 75
         self.__camera: Camera = camera
 
-        # Color data
-        self.__colors: dict[str, Color] = pygame.color.THECOLORS
-
         self.__visual_data: VisualData = visual_data
         self.__font: Font = Font(None, 12)
 
@@ -53,21 +50,32 @@ class Renderer:
 
     def __get_color(self, name: str | None) -> Color:
         if name is None:
-            return self.__colors["lightgray"]
+            return Color("lightgray")
         try:
-            return self.__colors[name]
-        except KeyError:
-            return self.__colors["lightgray"]
+            return Color(name)
+        except ValueError:
+            return Color("lightgray")
 
     def __draw_zones(self, zone: Zone) -> None:
         pos: tuple[float, float] = self.__positions(zone.coordinate)
         color: Color = self.__get_color(zone.metadata.color)
+        color.a = 180
+        radius = 15
+        surface: Surface = pygame.Surface(
+            (radius * 2, radius * 2),
+            pygame.SRCALPHA
+        )
 
         pygame.draw.circle(
-            self.__window,
+            surface,
             color,
-            pos,
-            10
+            (radius, radius),
+            radius
+        )
+
+        self.__window.blit(
+            surface,
+            (pos[0] - radius, pos[1] - radius)
         )
 
     def __draw_connection(self, conn: Connection) -> None:

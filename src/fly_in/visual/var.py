@@ -7,6 +7,6 @@ Clock = pygame.time.Clock
 Event = pygame.event.Event
 Surface = pygame.surface.Surface
 Font = pygame.font.Font
-Color = tuple[int, int, int, int]
+Color = pygame.Color
 Movement = Zone | Connection
 Rect = pygame.Rect
