@@ -139,7 +139,7 @@ class Renderer:
 
         pygame.draw.line(
             self.__window,
-            "red",
+            (60, 70, 90),
             start_pos,
             end_pos,
             width=2

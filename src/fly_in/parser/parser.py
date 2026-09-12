@@ -157,7 +157,7 @@ class Parser(BaseModel):
                     nb_drones
                 )
                 self.__reporter.warning(
-                    f"[Warning]: {start.name!r} zone max drones capacity "
+                    f"{start.name!r} zone max drones capacity "
                     "inferior to number of drones -- "
                     f"Updated to {nb_drones!r}"
                 )
@@ -165,7 +165,7 @@ class Parser(BaseModel):
             if end.metadata.max_drones < nb_drones:
                 end = self.__zparser.update_hub_capacity(end, nb_drones)
                 self.__reporter.warning(
-                    f"[Warning]: {end.name!r} zone max drones capacity "
+                    f"{end.name!r} zone max drones capacity "
                     "inferior to number of drones -- "
                     f"Updated to {nb_drones!r}"
                 )
