@@ -33,7 +33,6 @@ class Output:
         }
 
         for drone_id, path in paths.items():
-            has_started: bool = False
             for i in range(len(path) - 1):
                 current_node, current_time = path[i]
                 next_node, next_time = path[i + 1]
@@ -42,12 +41,7 @@ class Output:
                     continue
 
                 if current_node == next_node:
-                    if (
-                        current_node == self.__graph.start_node()
-                        and not has_started
-                    ):
-                        continue
-                    has_started = True
+                    continue
 
                 delta: int = next_time - current_time
                 drone: str = f"D{drone_id}"

@@ -192,7 +192,6 @@ class Renderer:
             self.__draw_connection(conn)
 
         # Zones
-        self.__domain.start_hub
         self.__draw_zones(self.__domain.start_hub)
         self.__draw_zones(self.__domain.end_hub)
         for zone in self.__domain.hubs:
