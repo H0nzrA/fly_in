@@ -52,6 +52,9 @@ class Platform:
     def get_pressed(self) -> set[KeyInput]:
         return self.__pressed.copy()
 
+    def get_mouse_position(self) -> tuple[int, int]:
+        return pygame.mouse.get_pos()
+
     def terminate(self) -> None:
         self.__running = False
 

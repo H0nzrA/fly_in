@@ -18,6 +18,7 @@ class VisualData:
         paths: dict[int, list[State]],
         graph: Graph
     ) -> None:
+        self.__nb_drones: int = len(paths)
         self.__max_time: int = get_max_time(paths) + 1
         self.__timed_path: dict[
             int,
@@ -113,6 +114,10 @@ class VisualData:
     @property
     def last_time(self) -> int:
         return self.__max_time
+
+    @property
+    def nb_drones(self) -> int:
+        return self.__nb_drones
 
     def reset_time(self) -> None:
         self.__time = 0

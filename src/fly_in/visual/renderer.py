@@ -25,6 +25,7 @@ class Renderer:
 
         self.__visual_data: VisualData = visual_data
         self.__font: Font = Font(None, 12)
+        self.__font_header: Font = Font(None, 18)
 
         # Animation Setup
         self.__drone_frames: list[Surface] = []
@@ -220,8 +221,144 @@ class Renderer:
         self.__draw_static()
         self.__draw_dynamic(progress)
 
-    def render(self, progress: float) -> None:
+    def __all_zones(self) -> list[Zone]:
+        return [
+            self.__domain.start_hub,
+            self.__domain.end_hub,
+            *self.__domain.hubs,
+        ]
+
+    @staticmethod
+    def __point_segment_distance(
+        p: tuple[float, float],
+        a: tuple[float, float],
+        b: tuple[float, float]
+    ) -> float:
+        px, py = p
+        ax, ay = a
+        bx, by = b
+
+        dx, dy = bx - ax, by - ay
+        if dx == 0 and dy == 0:
+            return float(((px - ax) ** 2 + (py - ay) ** 2) ** 0.5)
+
+        t: float = max(
+            0.0,
+            min(1.0, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy))
+        )
+        proj_x, proj_y = ax + t * dx, ay + t * dy
+
+        return float(((px - proj_x) ** 2 + (py - proj_y) ** 2) ** 0.5)
+
+    def __hit_test(self, mouse_pos: tuple[int, int]) -> Movement | None:
+        mx, my = mouse_pos
+        radius = 20
+
+        for zone in self.__all_zones():
+            zx, zy = self.__positions(zone.coordinate)
+            if (zx - mx) ** 2 + (zy - my) ** 2 <= radius ** 2:
+                return zone
+
+        threshold = 6.0
+        for conn in self.__domain.connections:
+            a = self.__positions(conn.zone_a.coordinate)
+            b = self.__positions(conn.zone_b.coordinate)
+            if self.__point_segment_distance(mouse_pos, a, b) <= threshold:
+                return conn
+
+        return None
+
+    def __tooltip_lines(self, target: Movement) -> list[str]:
+        if isinstance(target, Zone):
+            return [
+                f"Zone: {target.name}",
+                f"Type: {target.metadata.zone.value}",
+                f"Capacity: {target.metadata.max_drones}",
+                f"Coord: {target.coordinate}",
+            ]
+
+        return [
+            f"Connection: {target.zone_a.name} - {target.zone_b.name}",
+            f"Link capacity: {target.metadata.max_link_capacity}",
+        ]
+
+    def __draw_tooltip(
+        self,
+        mouse_pos: tuple[int, int],
+        target: Movement
+    ) -> None:
+        lines: list[str] = self.__tooltip_lines(target)
+
+        padding = 6
+        line_height = 14
+        width = max(
+            self.__font.size(line)[0] for line in lines
+        ) + padding * 2
+        height = line_height * len(lines) + padding * 2
+
+        win_w, win_h = self.__window.get_size()
+        x = min(mouse_pos[0] + 16, win_w - width - 4)
+        y = min(mouse_pos[1] + 16, win_h - height - 4)
+
+        box: Surface = pygame.Surface((width, height), pygame.SRCALPHA)
+        box.fill((20, 20, 30, 220))
+        pygame.draw.rect(box, (120, 120, 160, 255), box.get_rect(), width=1)
+
+        for i, line in enumerate(lines):
+            text: Surface = self.__font.render(line, True, "white")
+            box.blit(text, (padding, padding + i * line_height))
+
+        self.__window.blit(box, (x, y))
+
+    def __draw_dashboard(self, playing: bool) -> None:
+        current: dict[int, Movement] = self.__visual_data.get_current()
+        delivered: int = sum(
+            1
+            for movement in current.values()
+            if isinstance(movement, Zone)
+            and movement.name == self.__domain.end_hub.name
+        )
+        current_time: int = self.__visual_data.current_time
+        simulation_time: int = current_time - 1 if current_time > 0 else 0
+
+        lines: list[str] = [
+            "Fly-in \u2014 Drone Routing Simulation",
+            f"Turn: {simulation_time} / "
+            f"{self.__visual_data.last_time - 1}",
+            f"Delivered: {delivered} / {self.__visual_data.nb_drones}",
+            f"Status: {'Playing' if playing else 'Paused'}",
+        ]
+
+        padding = 8
+        line_height = 18
+        width = max(
+            self.__font_header.size(line)[0] for line in lines
+        ) + padding * 2
+        height = line_height * len(lines) + padding * 2
+
+        box: Surface = pygame.Surface((width, height), pygame.SRCALPHA)
+        box.fill((15, 15, 25, 200))
+        pygame.draw.rect(box, (120, 120, 160, 255), box.get_rect(), width=1)
+
+        for i, line in enumerate(lines):
+            text: Surface = self.__font_header.render(line, True, "white")
+            box.blit(text, (padding, padding + i * line_height))
+
+        self.__window.blit(box, (12, 12))
+
+    def render(
+        self,
+        progress: float,
+        mouse_pos: tuple[int, int],
+        playing: bool
+    ) -> None:
         self.__window.blit(self.__background, (0, 0))
         self.__window.blit(self.__dark_overlay, (0, 0))
         self.__draw(progress)
+        self.__draw_dashboard(playing)
+
+        hover: Movement | None = self.__hit_test(mouse_pos)
+        if hover is not None:
+            self.__draw_tooltip(mouse_pos, hover)
+
         pygame.display.flip()

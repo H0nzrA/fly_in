@@ -105,7 +105,11 @@ class VisualApp:
         while self.__platform.is_running():
             self.__platform.poll_events()
             self.__update()
-            self.__renderer.render(self.__progress)
+            self.__renderer.render(
+                self.__progress,
+                self.__platform.get_mouse_position(),
+                self.__playing
+            )
 
         self.__platform.close()
         self.__reporter.info("Terminal visual loop")
