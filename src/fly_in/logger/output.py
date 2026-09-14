@@ -9,6 +9,10 @@ class Output:
         self.__path: str | Path = path
 
     def make_output(self, paths: dict[int, list[State]]) -> None:
+        content: str = self.formated_output(paths)
+        write_content(self.__path, content)
+
+    def formated_output(self, paths: dict[int, list[State]]) -> str:
         per_turns: dict[int, list[str]] = self.__drones_paths(paths)
         total_turn: int = self.__get_total_turn(paths)
 
@@ -20,7 +24,7 @@ class Output:
         content: str = "\n".join(per_content)
         content += "\n\n" + f"Total turn: {total_turn}"
 
-        write_content(self.__path, content)
+        return content
 
     def __drones_paths(
         self,

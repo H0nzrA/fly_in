@@ -82,6 +82,11 @@ class Program:
                     self.__graph,
                     paths
                 )
+            else:
+                formated: str = self.__output.formated_output(paths)
+                self.__reporter.info("Drone paths:\n")
+                print(formated, "\n")
+
             self.__benchmark.output_benchmark()
             self.__reporter.info("=== Program exited normally ===")
 
