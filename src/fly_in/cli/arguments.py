@@ -19,5 +19,10 @@ def argument_parser() -> Namespace:
         "-b",
         default="./logs/benchmark.log"
     )
+    args.add_argument(
+        "--visual",
+        "-v",
+        action="store_true"
+    )
 
     return args.parse_args()

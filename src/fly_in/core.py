@@ -23,6 +23,7 @@ class Program:
         selector: MapSelector = MapSelector()
         path: Path = selector.get_map_path(arguments.input)
         parser: Parser = Parser(path=path)
+        self.__mode_visual: bool = arguments.visual
 
         self.__map: Map = parser.get_map()
         self.__graph: Graph = Graph(map=self.__map)
@@ -73,14 +74,16 @@ class Program:
             self.__output.make_output(paths)
             self.__reporter.info("Output file written!")
 
-            self.__benchmark.run(
-                "Visual",
-                self.__visual.run,
-                self.__map,
-                self.__graph,
-                paths
-            )
+            if self.__mode_visual:
+                self.__benchmark.run(
+                    "Visual",
+                    self.__visual.run,
+                    self.__map,
+                    self.__graph,
+                    paths
+                )
             self.__benchmark.output_benchmark()
+            self.__reporter.info("=== Program exited normally ===")
 
         except FlyInError as e:
             self.__reporter.error(str(e))

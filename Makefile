@@ -6,7 +6,7 @@
 #    By: trakotoz <trakotoz@student.42antananarivo  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/08/05 03:18:43 by trakotoz          #+#    #+#              #
-#    Updated: 2026/09/09 19:02:40 by trakotoz         ###   ########.fr        #
+#    Updated: 2026/09/14 19:28:23 by trakotoz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -80,6 +80,11 @@ install		: check
 run			: install
 	@ echo "$(C_BLUE)> Launch Project ...$(C_RESET)"
 	@ $(URUN) $(NAME) $(ARGS)
+
+
+run_visual	: install
+	@ echo "$(C_BLUE)> Launch Project (Visual mode)...$(C_RESET)"
+	@ $(URUN) $(NAME) $(ARGS) -v
 
 
 test		: install
