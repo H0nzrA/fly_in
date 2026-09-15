@@ -1,3 +1,5 @@
+"""Public graph model and shared reservation state."""
+
 from .graph import Graph
 from .world import WorldState, State
 

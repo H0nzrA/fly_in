@@ -1,7 +1,10 @@
+"""Command-line entry point for the Fly-in application."""
+
 from .core import Simulation
 
 
 def main() -> None:
+    """Run the simulation, handling interrupts and unexpected errors."""
     try:
         simulation: Simulation = Simulation()
         simulation.run()

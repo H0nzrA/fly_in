@@ -1,3 +1,5 @@
+"""Interactive terminal prompts for selecting a map file."""
+
 import questionary
 from pathlib import Path
 from importlib.resources import files
@@ -5,13 +7,24 @@ from .reporter import Reporter
 
 
 class MapSelector:
+    """Prompts the user to choose a mandatory map file interactively."""
+
     BACK = "Go BACK"
     EXIT = "EXIT"
 
     def __init__(self) -> None:
+        """Initialize the reporter used for map selection logging."""
         self.__reporter: Reporter = Reporter("Map Selector")
 
     def __select_map(self) -> Path:
+        """Prompt the user to choose a difficulty and then a map file.
+
+        Returns:
+            Path: Path to the selected map file.
+
+        Raises:
+            SystemExit: If the user exits the selection prompt.
+        """
         map_root = (
             files("fly_in")
             .joinpath("resources", "maps", "mandatory")
@@ -67,6 +80,14 @@ class MapSelector:
                 return Path(selected_difficulty / selected)
 
     def get_map_path(self, _input: str | None) -> Path:
+        """Resolve the map file path from CLI input or interactive selection.
+
+        Args:
+            _input (str | None): Map path given on the command line, if any.
+
+        Returns:
+            Path: Path to the map file to load.
+        """
         if _input:
             self.__reporter.warning("Selected map is the given argument.")
             return Path(_input)

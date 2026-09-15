@@ -1,3 +1,5 @@
+"""Top-level orchestration of setup, solving, and output."""
+
 from .cli import MapSelector, Reporter, argument_parser
 from .parser import Parser
 from pathlib import Path
@@ -11,11 +13,18 @@ from .visual import VisualApp
 
 
 class Simulation:
+    """Orchestrates map loading, solving, output, and visualization."""
+
     def __init__(self) -> None:
+        """Print the introduction banner and initialize the core reporter."""
         self.introduction()
         self.__reporter: Reporter = Reporter(source="Core")
 
     def setup(self) -> None:
+        """Set up the simulation.
+
+        Parse arguments, load the map, and build the graph, solver, and I/O.
+        """
         self.__reporter.info("Setup environement ...")
 
         arguments: Namespace = argument_parser()
@@ -48,6 +57,7 @@ class Simulation:
         self.__reporter.info("Setup Done.")
 
     def introduction(self) -> None:
+        """Print the application's ASCII-art banner."""
         intro: str = "\n".join(
             (
                 r" _          _   _      ______ _       ",
@@ -64,6 +74,11 @@ class Simulation:
         print(intro)
 
     def run(self) -> None:
+        """Run the full simulation.
+
+        Catches and logs any FlyInError raised
+        during setup or execution.
+        """
         try:
             self.setup()
             paths: dict[int, list[State]] = self.__benchmark.run(

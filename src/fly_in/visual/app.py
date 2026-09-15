@@ -1,3 +1,5 @@
+"""Top-level visual application loop."""
+
 from ..utils import VisualError, FlyInError
 from ..cli import Reporter
 from .platform import Platform
@@ -11,7 +13,10 @@ from .mixer import Mixer
 
 
 class VisualApp:
+    """Runs the interactive pygame visualization of solved drone paths."""
+
     def __init__(self) -> None:
+        """Initialize the reporter used for visual application logging."""
         self.__reporter: Reporter = Reporter("Visual")
 
     def __setup(
@@ -20,6 +25,13 @@ class VisualApp:
         graph: Graph,
         paths: dict[int, list[State]]
     ) -> None:
+        """Initialize the platform, camera, renderer, mixer, and visual data.
+
+        Args:
+            domain (Map): Map being visualized.
+            graph (Graph): Graph corresponding to the map.
+            paths (dict[int, list[State]]): Solved path per drone id.
+        """
         try:
             self.__visual_data: VisualData = VisualData(
                 paths,
@@ -42,10 +54,11 @@ class VisualApp:
             self.__reporter.info("Successfully initialize visual application")
 
         except VisualError as e:
-            self.__reporter.info(str(e))
+            self.__reporter.error(str(e))
             raise FlyInError
 
     def __update(self) -> None:
+        """Process input and advance visual states."""
         keys: set[KeyInput] = self.__platform.get_keys()
         pressed: set[KeyInput] = self.__platform.get_pressed()
 
@@ -98,6 +111,13 @@ class VisualApp:
         graph: Graph,
         paths: dict[int, list[State]]
     ) -> None:
+        """Set up and run the visual application loop.
+
+        Args:
+            domain (Map): Map being visualized.
+            graph (Graph): Graph corresponding to the map.
+            paths (dict[int, list[State]]): Solved path per drone id.
+        """
         self.__setup(
             domain,
             graph,
@@ -114,5 +134,6 @@ class VisualApp:
                 self.__playing
             )
 
+        self.__mixer.terminate()
         self.__platform.close()
         self.__reporter.info("Terminal visual loop")

@@ -1,14 +1,28 @@
+"""Dijkstra shortest-path distances used as a search heuristic."""
+
 from ..graph import Graph
 from math import inf
 
 
 class Dijkstra:
+    """Computes shortest-path distances from a source node to all nodes."""
+
     def compute_distance(
         self,
         graph: Graph,
         source: int,
         goal: int
     ) -> dict[int, float]:
+        """Compute the shortest distance from source to every graph node.
+
+        Args:
+            graph (Graph): Graph to search.
+            source (int): Node id to compute distances from.
+            goal (int): Unused target node id, kept for interface symmetry.
+
+        Returns:
+            dict[int, float]: Shortest distance from source to each node.
+        """
         unvisited: set[int] = set()
         distances: dict[int, float] = {}
 
@@ -45,6 +59,15 @@ class Dijkstra:
         unvisited: set[int],
         distances: dict[int, float]
     ) -> int:
+        """Pop the unvisited node with the smallest known distance.
+
+        Args:
+            unvisited (set[int]): Nodes not yet finalized.
+            distances (dict[int, float]): Current best distance per node.
+
+        Returns:
+            int: The unvisited node with the smallest distance.
+        """
         find: int = min(
             unvisited,
             key=lambda x: distances[x]

@@ -1,3 +1,5 @@
+"""Parsing of connection definition lines from map files."""
+
 from ..domain import Connection, Zone
 from typing import Any
 from .metadata_parser import get_metadata
@@ -6,7 +8,10 @@ from collections.abc import Callable
 
 
 class ConnectionParser:
+    """Parses connection lines into Connection domain objects."""
+
     def __init__(self) -> None:
+        """Initialize the set tracking already-seen connections."""
         self.__conn_seen: set[frozenset[str]] = set()
 
     def get_connection(
@@ -14,6 +19,19 @@ class ConnectionParser:
         value: str,
         get_zone: Callable[[str], Zone]
     ) -> Connection:
+        """Parse a connection line into a Connection object.
+
+        Args:
+            value (str): Connection definition.
+            get_zone (Callable[[str], Zone]): Lookup to resolve zone names.
+
+        Returns:
+            Connection: The parsed connection.
+
+        Raises:
+            ValueError: If the line is malformed, refers to unknown zones, or
+                duplicates an existing connection.
+        """
         prop: list[str] = value.split()
         if len(prop) > 2:
             raise ValueError("Too Many value given for Connection data")

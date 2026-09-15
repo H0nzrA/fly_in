@@ -1,3 +1,5 @@
+"""Public API of the fly_in drone routing package."""
+
 from .domain import (
     Zone,
     ZoneMetadata,

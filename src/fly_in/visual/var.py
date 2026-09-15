@@ -1,3 +1,5 @@
+"""Shared pygame type aliases used across the visual package."""
+
 import pygame
 from ..domain import Zone, Connection
 

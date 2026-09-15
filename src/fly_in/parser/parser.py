@@ -1,3 +1,5 @@
+"""Top-level map file parser producing a validated Map domain object."""
+
 from pydantic import (
     BaseModel,
     ConfigDict,
@@ -21,11 +23,19 @@ from ..utils import FlyInError, ParserError
 
 
 class Key(Enum):
+    """Recognized top-level keys in a map file."""
+
     NDRONES = "nb_drones"
     CONN = "connection"
 
 
 class Parser(BaseModel):
+    """Parses a map file into a validated Map domain object.
+
+    Attributes:
+        path (Path): Path to the map file to parse.
+    """
+
     model_config = ConfigDict(extra="forbid")
 
     path: Path
@@ -36,10 +46,23 @@ class Parser(BaseModel):
 
     @model_validator(mode="after")
     def initializer(self) -> "Parser":
+        """Initialize the parser's reporter after model construction.
+
+        Returns:
+            Parser: The initialized parser instance.
+        """
         self.__reporter: Reporter = Reporter("Parser")
         return self
 
     def __get_file_content(self) -> list[str]:
+        """Read and split the map file into lines.
+
+        Returns:
+            list[str]: The lines of the map file.
+
+        Raises:
+            FlyInError: If the file cannot be read.
+        """
         try:
             content: list[str] = self.path.read_text().split("\n")
             return content
@@ -53,6 +76,14 @@ class Parser(BaseModel):
             raise FlyInError(e)
 
     def __parse(self) -> Map:
+        """Parse the map file's lines into a validated Map.
+
+        Returns:
+            Map: The parsed and validated map.
+
+        Raises:
+            ParserError: If a line is malformed or violates parsing rules.
+        """
         self.__reporter.info("Starting parsing ...")
 
         lines: list[str] = self.__get_file_content()
@@ -146,6 +177,17 @@ class Parser(BaseModel):
         return self.__evaluation(res)
 
     def __evaluation(self, res: dict[str, Any]) -> Map:
+        """Finalize parsed data, adjusting hub capacity if needed.
+
+        Args:
+            res (dict[str, Any]): Raw parsed fields collected while parsing.
+
+        Returns:
+            Map: The constructed map.
+
+        Raises:
+            ValueError: If a required key is missing from the parsed data.
+        """
         try:
             nb_drones: int = res["nb_drones"]
             start: Zone = res[ZonePrefix.START.value]
@@ -180,6 +222,14 @@ class Parser(BaseModel):
         return Map(**res)
 
     def get_map(self) -> Map:
+        """Parse the map file and return the resulting Map.
+
+        Returns:
+            Map: The parsed and validated map.
+
+        Raises:
+            FlyInError: If parsing or validation fails.
+        """
         try:
             return self.__parse()
 

@@ -1,3 +1,5 @@
+"""Adjacency-list graph view over the domain map."""
+
 from pydantic import BaseModel, ConfigDict, PrivateAttr, model_validator
 from ..domain import (
     Map,
@@ -6,16 +8,16 @@ from ..domain import (
     Connection
 )
 from ..cli import Reporter
-
-
-class NodeNotFoundError(ValueError):
-    def __init__(self, id: int) -> None:
-        super().__init__(
-            f"No zone with id {id!r} found in list"
-        )
+from ..utils import NodeNotFoundError
 
 
 class Graph(BaseModel):
+    """Adjacency-list view of a Map used for pathfinding.
+
+    Attributes:
+        map (Map): The underlying domain map.
+    """
+
     model_config = ConfigDict(
         extra="forbid",
         frozen=True
@@ -28,6 +30,11 @@ class Graph(BaseModel):
 
     @model_validator(mode="after")
     def initializer(self) -> "Graph":
+        """Build the adjacency list from the map's connections.
+
+        Returns:
+            Graph: The initialized graph instance.
+        """
         self.__reporter: Reporter = Reporter("Graph")
         self.__reporter.info("Adjacency list initialization ...")
 
@@ -42,11 +49,28 @@ class Graph(BaseModel):
         return self
 
     def __node_verification(self, id: int) -> None:
+        """Ensure a node id exists in the graph.
+
+        Args:
+            id (int): Node id to verify.
+
+        Raises:
+            ValueError: If no zone with the given id exists.
+        """
         if id not in self.get_nodes():
             self.__reporter.error(f"No zone with id {id!r} found in list")
             raise ValueError
 
     def neighbors(self, id: int) -> dict[int, int | None]:
+        """List the reachable neighbors of a node and their travel weights.
+
+        Args:
+            id (int): Node id to find neighbors for.
+
+        Returns:
+            dict[int, int | None]: Travel weight per neighbor node id, or None
+                if the neighbor is blocked.
+        """
         self.__node_verification(id)
 
         ngb: dict[int, int | None] = {}
@@ -61,6 +85,14 @@ class Graph(BaseModel):
         return ngb
 
     def __zone_weight(self, id: int) -> int | None:
+        """Determine the travel weight of entering a zone.
+
+        Args:
+            id (int): Node id of the zone.
+
+        Returns:
+            int | None: Travel weight of the zone, or None if it is blocked.
+        """
         zone: Zone = self.get_zone_by_id(id)
 
         ztype: ZoneType = zone.metadata.zone
@@ -75,6 +107,17 @@ class Graph(BaseModel):
         return 1
 
     def get_zone_by_id(self, id: int) -> Zone:
+        """Look up the zone with the given id.
+
+        Args:
+            id (int): Node id to look up.
+
+        Returns:
+            Zone: The matching zone.
+
+        Raises:
+            ValueError: If no zone with the given id exists.
+        """
         self.__node_verification(id)
 
         if id == self.map.start_hub.id:
@@ -90,6 +133,11 @@ class Graph(BaseModel):
         raise ValueError
 
     def get_nodes(self) -> list[int]:
+        """List every node id in the graph.
+
+        Returns:
+            list[int]: The start hub, hubs, and end hub node ids.
+        """
         return [
             self.map.start_hub.id,
             *[m.id for m in self.map.hubs],
@@ -97,6 +145,18 @@ class Graph(BaseModel):
         ]
 
     def get_connection(self, a: int, b: int) -> Connection:
+        """Find the connection between two nodes.
+
+        Args:
+            a (int): First node id.
+            b (int): Second node id.
+
+        Returns:
+            Connection: The connection linking the two nodes.
+
+        Raises:
+            NodeNotFoundError: If no connection links the two nodes.
+        """
         self.__node_verification(a)
         self.__node_verification(b)
 
@@ -107,6 +167,14 @@ class Graph(BaseModel):
         raise NodeNotFoundError(b)
 
     def is_priority_node(self, id: int) -> bool:
+        """Check whether a node is a priority zone.
+
+        Args:
+            id (int): Node id to check.
+
+        Returns:
+            bool: True if the zone is a priority zone.
+        """
         self.__node_verification(id)
         zone: Zone = self.get_zone_by_id(id)
 
@@ -115,16 +183,46 @@ class Graph(BaseModel):
         return False
 
     def start_node(self) -> int:
+        """Return the start hub's node id.
+
+        Returns:
+            int: The start hub's node id.
+        """
         return self.map.start_hub.id
 
     def end_node(self) -> int:
+        """Return the end hub's node id.
+
+        Returns:
+            int: The end hub's node id.
+        """
         return self.map.end_hub.id
 
     def get_node_capacity(self, id: int) -> int:
+        """Return the maximum drone capacity of a node.
+
+        Args:
+            id (int): Node id to check.
+
+        Returns:
+            int: Maximum number of drones allowed on the node at once.
+        """
         self.__node_verification(id)
         return self.get_zone_by_id(id).metadata.max_drones
 
     def get_edge_capacity(self, a: int, b: int) -> int:
+        """Return the maximum drone capacity of an edge.
+
+        Args:
+            a (int): First node id of the edge.
+            b (int): Second node id of the edge.
+
+        Returns:
+            int: Maximum number of drones allowed on the edge at once.
+
+        Raises:
+            NodeNotFoundError: If no connection links the two nodes.
+        """
         self.__node_verification(a)
 
         for conn in self.__adjacency_list[a]:

@@ -1,3 +1,5 @@
+"""Public domain models for zones, connections, and the map."""
+
 from .zone import (
     Zone,
     ZoneMetadata,

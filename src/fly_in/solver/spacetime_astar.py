@@ -1,3 +1,5 @@
+"""Space-time A* search for a single drone avoiding existing reservations."""
+
 from ..graph import Graph, WorldState, State
 from math import inf
 from ..utils import SolverError
@@ -7,7 +9,14 @@ Cost = tuple[float, int]  # turn, -priority
 
 
 class SpacetimeAStar:
+    """Finds a single conflict-free path through space and time."""
+
     def __init__(self, graph: Graph) -> None:
+        """Initialize the search with the graph to route through.
+
+        Args:
+            graph (Graph): Graph the drone will be routed through.
+        """
         self.__graph: Graph = graph
 
     def __data_init(self, time: int) -> tuple[
@@ -16,6 +25,15 @@ class SpacetimeAStar:
         dict[State, Cost],
         dict[State, Cost]
     ]:
+        """Initialize the search's open set and scoring tables.
+
+        Args:
+            time (int): Starting time step.
+
+        Returns:
+            tuple: The empty open set, parent map, distance map, and f-score
+                map used by the search.
+        """
         open_set: set[State] = set()
         parent: dict[State, State | None] = {
             (node, time): None
@@ -40,6 +58,23 @@ class SpacetimeAStar:
         time: int,
         heuristic: dict[int, float]
     ) -> list[State]:
+        """Find a conflict-free path from source to goal using space-time A*.
+
+        Args:
+            world (WorldState): Shared reservations from previously planned
+                drones.
+            source (int): Starting node id.
+            goal (int): Target node id.
+            time (int): Starting time step.
+            heuristic (dict[int, float]): Precomputed distance-to-goal estimate
+                per node.
+
+        Returns:
+            list[State]: Sequence of (node, time) states forming the path.
+
+        Raises:
+            SolverError: If no path to the goal is reachable.
+        """
         open_set, parent, distances, f_scores = self.__data_init(time)
 
         # Start consideration
@@ -105,6 +140,17 @@ class SpacetimeAStar:
         next_state: State,
         world: WorldState
     ) -> bool:
+        """Check whether a transition avoids existing node/edge reservations.
+
+        Args:
+            current_state (State): State being transitioned from.
+            next_state (State): State being transitioned to.
+            world (WorldState): Shared reservations from previously planned
+                drones.
+
+        Returns:
+            bool: True if the transition is free of conflicts.
+        """
         c_node, c_time = current_state
         neighbor, next_time = next_state
 
@@ -134,6 +180,15 @@ class SpacetimeAStar:
         open_set: set[State],
         f_scores: dict[State, Cost]
     ) -> State:
+        """Pop the open state with the smallest f-score.
+
+        Args:
+            open_set (set[State]): States awaiting expansion.
+            f_scores (dict[State, Cost]): f-score per state.
+
+        Returns:
+            State: The open state with the smallest f-score.
+        """
         min_state: State = min(
             open_set,
             key=lambda state: f_scores[state]
@@ -142,6 +197,15 @@ class SpacetimeAStar:
         return min_state
 
     def __priority_cost(self, c_node: int, neighbor: int) -> int:
+        """Compute the priority bonus for moving into a priority node.
+
+        Args:
+            c_node (int): Node being moved from.
+            neighbor (int): Node being moved to.
+
+        Returns:
+            int: 1 if the neighbor is a priority node, otherwise 0.
+        """
         if c_node == neighbor:
             return 0
 
@@ -152,6 +216,15 @@ class SpacetimeAStar:
         parent: dict[State, State | None],
         state: State
     ) -> list[State]:
+        """Rebuild the path from the goal state back to the start.
+
+        Args:
+            parent (dict[State, State | None]): Parent state per visited state.
+            state (State): Goal state to trace back from.
+
+        Returns:
+            list[State]: The path from start to goal, in order.
+        """
         node_state: State | None = state
         path: list[State] = []
 

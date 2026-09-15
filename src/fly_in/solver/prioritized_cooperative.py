@@ -1,3 +1,5 @@
+"""Prioritized planning across multiple drones sharing the same graph."""
+
 from ..graph import Graph, WorldState, State
 from .dijkstra import Dijkstra
 from .spacetime_astar import SpacetimeAStar
@@ -6,10 +8,17 @@ from ..utils import SolverError
 
 
 class PrioritizedCooperative:
+    """Sequentially plans conflict-free paths for multiple drones."""
+
     def __init__(
         self,
         graph: Graph,
     ) -> None:
+        """Initialize the solver's heuristic, world state, and search engine.
+
+        Args:
+            graph (Graph): Graph the drones will be routed through.
+        """
         self.__reporter: Reporter = Reporter("Solver")
 
         self.__reporter.info("Initialize...")
@@ -24,6 +33,17 @@ class PrioritizedCooperative:
         self.__graph: Graph = graph
 
     def compute(self, nb_agent: int) -> dict[int, list[State]]:
+        """Plan a path for each drone, one at a time, in priority order.
+
+        Args:
+            nb_agent (int): Number of drones to plan for.
+
+        Returns:
+            dict[int, list[State]]: Solved path per drone id.
+
+        Raises:
+            SolverError: If a path cannot be found for any drone.
+        """
         self.__reporter.info("Start Solving ...\n")
         paths: dict[int, list[State]] = {}
 
@@ -54,6 +74,11 @@ class PrioritizedCooperative:
         return paths
 
     def __commit(self, path: list[State]) -> None:
+        """Reserve a drone's path in the shared world state.
+
+        Args:
+            path (list[State]): Path to reserve.
+        """
         for state in path:
             self.__world.reserve_node(*state)
 

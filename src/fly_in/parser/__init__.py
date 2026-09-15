@@ -1,3 +1,5 @@
+"""Public map file parser."""
+
 from .parser import Parser
 
 
