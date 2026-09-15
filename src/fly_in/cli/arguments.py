@@ -12,7 +12,7 @@ def argument_parser() -> Namespace:
     args.add_argument(
         "--output",
         "-o",
-        default="./logs/output.log"
+        default="./logs/simulation.log"
     )
     args.add_argument(
         "--benchmark",

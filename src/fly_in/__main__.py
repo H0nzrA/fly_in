@@ -1,10 +1,10 @@
-from .core import Program
+from .core import Simulation
 
 
 def main() -> None:
     try:
-        program: Program = Program()
-        program.run()
+        simulation: Simulation = Simulation()
+        simulation.run()
 
     except (KeyboardInterrupt, EOFError):
         print("\n=== Program Stopped ===\n")

@@ -10,7 +10,7 @@ from argparse import Namespace
 from .visual import VisualApp
 
 
-class Program:
+class Simulation:
     def __init__(self) -> None:
         self.introduction()
         self.__reporter: Reporter = Reporter(source="Core")
