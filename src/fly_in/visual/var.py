@@ -10,3 +10,4 @@ Font = pygame.font.Font
 Color = pygame.Color
 Movement = Zone | Connection
 Rect = pygame.Rect
+Sound = pygame.mixer.Sound

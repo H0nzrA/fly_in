@@ -7,6 +7,7 @@ from ..domain import Map
 from ..graph import Graph, State
 from .visual_data import VisualData
 from .camera import Camera
+from .mixer import Mixer
 
 
 class VisualApp:
@@ -37,6 +38,7 @@ class VisualApp:
                 self.__camera,
                 self.__visual_data
             )
+            self.__mixer: Mixer = Mixer()
             self.__reporter.info("Successfully initialize visual application")
 
         except VisualError as e:
@@ -102,6 +104,7 @@ class VisualApp:
             paths
         )
 
+        self.__mixer.play()
         while self.__platform.is_running():
             self.__platform.poll_events()
             self.__update()
