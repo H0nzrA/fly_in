@@ -35,7 +35,7 @@ class Mixer:
 
     def play(self) -> None:
         """Play the loaded background sound."""
-        self.__song.play()
+        self.__song.play(-1)
 
     def terminate(self) -> None:
         """Shut down the pygame mixer."""
