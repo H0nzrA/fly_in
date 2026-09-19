@@ -5,6 +5,7 @@ from .dijkstra import Dijkstra
 from .spacetime_astar import SpacetimeAStar
 from ..cli import Reporter, loading
 from ..utils import SolverError
+from math import inf
 
 
 class PrioritizedCooperative:
@@ -29,6 +30,9 @@ class PrioritizedCooperative:
             graph.end_node(),
             graph.start_node()
         )
+
+        if self.__heuristic[graph.start_node()] == inf:
+            raise SolverError("Goal is Unreachable")
 
         self.__graph: Graph = graph
 
