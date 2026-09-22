@@ -32,7 +32,7 @@ class ConnectionParser:
             ValueError: If the line is malformed, refers to unknown zones, or
                 duplicates an existing connection.
         """
-        prop: list[str] = value.split()
+        prop: list[str] = value.split(maxsplit=1)
         if len(prop) > 2:
             raise ValueError("Too Many value given for Connection data")
         if len(prop) == 0:
