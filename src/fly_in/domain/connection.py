@@ -14,7 +14,7 @@ class ConnectionMetadata(BaseModel):
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
-    max_link_capacity: int = Field(ge=0, default=1)
+    max_link_capacity: int = Field(ge=1, default=1)
 
 
 class Connection(BaseModel):

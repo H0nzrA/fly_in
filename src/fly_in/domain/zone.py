@@ -34,7 +34,7 @@ class ZoneMetadata(BaseModel):
 
     zone: ZoneType = ZoneType.NORMAL
     color: str | None = None
-    max_drones: int = Field(ge=0, default=1)  # Maximum drones occupied
+    max_drones: int = Field(ge=1, default=1)  # Maximum drones occupied
 
     @model_validator(mode="after")
     def initialization(self) -> "ZoneMetadata":
