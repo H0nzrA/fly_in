@@ -38,6 +38,7 @@ class Platform:
             screen_height - screen_height // 7
         )
         window: Window = pygame.display.set_mode(window_size)
+        pygame.display.set_caption("Let's Fly")
 
         return window
 
